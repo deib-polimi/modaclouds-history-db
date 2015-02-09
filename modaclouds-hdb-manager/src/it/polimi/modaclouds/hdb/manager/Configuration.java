@@ -1,4 +1,4 @@
-package it.polimi.modaclouds.hdb.metrics_observer;
+package it.polimi.modaclouds.hdb.manager;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

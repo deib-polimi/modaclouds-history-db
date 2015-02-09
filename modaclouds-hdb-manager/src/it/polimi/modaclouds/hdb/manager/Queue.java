@@ -1,4 +1,4 @@
-package it.polimi.hdb.manager;
+package it.polimi.modaclouds.hdb.manager;
 
 import java.io.IOException;
 
@@ -89,28 +89,7 @@ public class Queue {
 		logger.debug("Connection to the queue closed.");
 	}
 	
-	public Queue() throws IOException {
-		this(Configuration.QUEUE_HOST, Configuration.QUEUE_NAME);
-	}
-	
-	public static void main(String[] args) {
-		try {
-			
-			while (true) {
-				
-				Queue q = new Queue();
-			
-				q.count();
-				
-				q.getMessage(1000);
-				
-				q.close();
-				
-				Thread.sleep(5000);
-				
-			}
-		} catch (Exception e1) {
-			logger.error("Argh!", e1);
-		}
+	public Queue(String queueName) throws IOException {
+		this(Configuration.QUEUE_HOST, queueName);
 	}
 }

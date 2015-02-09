@@ -1,4 +1,4 @@
-package it.polimi.hdb.manager;
+package it.polimi.modaclouds.hdb.manager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +16,12 @@ public class Manager extends Thread {
 	private Queue queue;
 	private DataStore dataStore;
 	
-	public Manager() {
+	private String queueName;
+	
+	public Manager(String queueName) {
+		this.queueName = queueName;
 		try {
-			queue = new Queue();
+			queue = new Queue(queueName);
 			dataStore = new DataStore();
 			logger.debug("Manager initialized.");
 		} catch (Exception e) {
@@ -59,11 +62,17 @@ public class Manager extends Thread {
 	
 	public void parseMessage(String msg) {
 		logger.debug("Message to be parsed:\n{}", msg);
-		dataStore.add(msg);
+		
+		if (queueName.equals(Configuration.QUEUE_RESULTS))
+			dataStore.addResult(msg);
+		else if (queueName.equals(Configuration.QUEUE_MODELS))
+			dataStore.addModel(msg);
+		else if (queueName.equals(Configuration.QUEUE_DELTA_MODELS))
+			dataStore.addDeltaModel(msg);
 	}
 	
 	public static void main(String[] args) {
 		Manager.RUNNING_TIME = -1;
-		new Manager().start();
+		new Manager(Configuration.QUEUE_RESULTS).start();
 	}
 }
