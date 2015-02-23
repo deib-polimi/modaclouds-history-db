@@ -17,8 +17,24 @@ public class Main {
 	public static void main(String[] args) {
 		String configurationFile = null;
 		
+		System.out.println("\nHistory-DB\n");
+		
 		if (args.length > 0) {
-			if (args[0].equals("-UseDefaultConfiguration")) {
+			if (args[0].equals("-Help") || args[0].equals("-h") || args[0].equals("--h")) {
+				System.out.println(
+						"To start the tool you can just call the file without any parameter:\n" + 
+						"the program will look for the default configuration file,\n" +
+						"\t" + DEFAULT_CONF + "\n" +
+						"in the same folder of this executable. If the file isn't readable or doesn't exist\n" +
+						"at all, it will be created with the default parameters.\n\n" +
+						"You could also call the program with a parameter, that would be the name of the file\n"
+						+ "that will be used as the configuration file.\n\n"
+						+ "Lastly, it is possible to use -UseDefaultConfiguration as a parameter to reset the\n"
+						+ "configuration file (the default if no other parameter is passed, or otherwise if a\n"
+						+ "file name is passed it will try to save the configuration to that file if it doesn't exist."
+						);
+				return;
+			} else if (args[0].equals("-UseDefaultConfiguration")) {
 				String f = DEFAULT_CONF;
 				if (args.length > 1) {
 					f = args[1];
