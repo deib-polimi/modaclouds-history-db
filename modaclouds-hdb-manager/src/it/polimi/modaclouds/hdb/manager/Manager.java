@@ -25,7 +25,7 @@ public class Manager extends Thread {
 			dataStore = new DataStore();
 			logger.debug("Manager initialized.");
 		} catch (Exception e) {
-			logger.error("Argh!", e);
+			logger.error("Error while initializing the manager!", e);
 		}
 	}
 	
@@ -56,7 +56,7 @@ public class Manager extends Thread {
 		try{
 			queue.close();
 		} catch (Exception e) {
-			logger.error("Argh!", e);
+			logger.error("Error while closing the queue!", e);
 		}
 	}
 	
@@ -64,11 +64,13 @@ public class Manager extends Thread {
 		logger.debug("Message to be parsed:\n{}", msg);
 		
 		if (queueName.equals(Configuration.QUEUE_RESULTS))
-			dataStore.addResult(msg);
+			dataStore.addMonitoringData(msg);
 		else if (queueName.equals(Configuration.QUEUE_MODELS))
 			dataStore.addModel(msg);
 		else if (queueName.equals(Configuration.QUEUE_DELTA_MODELS))
 			dataStore.addDeltaModel(msg);
+		else if (queueName.equals(Configuration.QUEUE_MODELS_DELETE))
+			dataStore.deleteModel(msg);
 	}
 	
 	public static void main(String[] args) {

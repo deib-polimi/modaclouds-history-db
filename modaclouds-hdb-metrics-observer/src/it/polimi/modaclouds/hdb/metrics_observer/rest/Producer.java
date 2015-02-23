@@ -38,6 +38,10 @@ public class Producer {
 		this(Configuration.DEFAULT_PORT);
 	}
 	
+	private void sendMessage(String path, Method method) {
+		sendMessage(path, "", method);
+	}
+	
 	private void sendMessage(String path, String body, Method method) {
 		Client client = new Client(new Context(), Protocol.HTTP);
 		
@@ -48,26 +52,28 @@ public class Producer {
 			representation = request.post(body);
 		else if (method == Method.PUT)
 			representation = request.put(body);
+		else if (method == Method.DELETE)
+			representation = request.delete();
 		
 		if (representation != null) {
-			logger.debug("Message sent!");
+			logger.info("Message sent!");
 			try {
 				logger.debug("Answer:\n{}", representation.getText());
 			} catch (IOException e) {
 				logger.error("Argh!", e);
 			}
 		} else {
-			logger.debug("Error in sending the message! Method not recognized.");
+			logger.error("Error while sending the message! Method not recognized.");
 		}
 		
 		try {
 			client.stop();
 		} catch (Exception e) {
-			logger.error("Argh!", e);
+			logger.error("Error while stopping the REST client!", e);
 		}
 	}
 	
-	public void sendResult() {
+	public void sendMonitoringData() {
 		String body = "";
 		
 		Scanner sc = new Scanner(this.getClass().getResourceAsStream("/" + Configuration.EXAMPLE_RESULT_FILE));
@@ -78,6 +84,8 @@ public class Producer {
 		sc.close();
 		
 		body = String.format(body, UUID.randomUUID().toString(), System.currentTimeMillis());
+		
+		logger.info("Trying sending the monitoring data...");
 		
 		this.sendMessage(Configuration.DEFAULT_PATH, body, Method.POST);
 	}
@@ -93,21 +101,69 @@ public class Producer {
 		sc.close();
 		
 //		body = String.format(body, UUID.randomUUID().toString(), System.currentTimeMillis());
+
+		logger.info("Trying sending the model...");
 		
-		if (r.nextInt(101) > 50)
-			this.sendMessage(Configuration.DEFAULT_PATH_MODEL, body, Method.PUT);
-		else
-			this.sendMessage(Configuration.DEFAULT_PATH_MODEL, body, Method.POST);
+		this.sendMessage(Configuration.DEFAULT_PATH_MODEL, body, Method.PUT);
+	}
+	
+	public void sendDeltaModel() {
+		String body = "";
+		
+		Scanner sc = new Scanner(this.getClass().getResourceAsStream("/" + Configuration.EXAMPLE_MODEL_FILE));
+		
+		while (sc.hasNextLine())
+			body += sc.nextLine() + "\n";
+		
+		sc.close();
+		
+//		body = String.format(body, UUID.randomUUID().toString(), System.currentTimeMillis());
+
+		logger.info("Trying sending the update to a model...");
+		
+		this.sendMessage(Configuration.DEFAULT_PATH_MODEL, body, Method.POST);
+	}
+	
+	public void sendDeleteModel() {
+		String id = "id" + System.currentTimeMillis();
+
+		logger.info("Trying sending the cancellation of a model...");
+		
+		this.sendMessage(Configuration.DEFAULT_PATH_MODEL + "/" + id, Method.DELETE);
+	}
+	
+	public void randomMessage() {
+		
+//		sendMonitoringData();
+		
+//		sendModel();
+		
+//		sendDeleteModel();
+		
+//		sendDeltaModel();
+		
+		
+		int rnd = r.nextInt(4);
+		
+		switch (rnd) {
+		case 0:
+			sendModel();
+			break;
+		case 1:
+			sendDeltaModel();
+			break;
+		case 2:
+			sendDeleteModel();
+			break;
+		default:
+			sendMonitoringData();
+		}
 	}
 	
 	public static void test(int msgs, int wait) {
 		Producer p = new Producer();
 		for (int i = 1; i <= msgs; ++i) {
-			
-			if (r.nextInt(101) > 50)
-				p.sendResult();
-			else
-				p.sendModel();
+			p.randomMessage();
 			
 			if (wait > 0 && i < msgs)
 				try {
@@ -118,10 +174,6 @@ public class Producer {
 	
 	public static void test(int msgs) {
 		test(msgs, 1000);
-	}
-	
-	public static void main(String[] args) {
-		test(1);
 	}
 	
 }

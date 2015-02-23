@@ -1,24 +1,21 @@
 package it.polimi.modaclouds.hdb.metrics_observer;
 
+import it.polimi.modaclouds.hdb.metrics_observer.rest.Producer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import it.polimi.modaclouds.hdb.metrics_observer.rest.Listener;
-import it.polimi.modaclouds.hdb.metrics_observer.rest.Producer;
 
 public class Main {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	
 	public static void main(String[] args) {
-//		Listener.main(args);
+		logger.info("Test starting...");
 		
-		
-		Listener.RUNNING_TIME = -1;
-		Listener l = new Listener();
-        l.start();
-        
-        logger.debug("Listener started!");
+		MetricsObserver.RUNNING_TIME = -1;
+		MetricsObserver mo = new MetricsObserver();
+		mo.start();
+		logger.debug("MetricsObserver started!");
         
         try {
 			Thread.sleep(2);
@@ -28,5 +25,7 @@ public class Main {
         
         logger.debug("Starting the producer...");
         Producer.test(30);
+        
+        logger.info("Test started!");
 	}
 }

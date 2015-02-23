@@ -78,7 +78,7 @@ public class Queue {
 			logger.debug("Messages in the queue: {}.", count);
 			return count;
 		} catch (Exception e) {
-			logger.error("Argh!", e);
+			logger.error("Error while checking the number of messages in the queue!", e);
 			return -1;
 		}
 	}

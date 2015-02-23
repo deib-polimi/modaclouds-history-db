@@ -28,14 +28,17 @@ public abstract class Configuration {
 	public static String QUEUE_RESULTS = "hdb_results";
 	public static String QUEUE_MODELS = "hdb_models";
 	public static String QUEUE_DELTA_MODELS = "hdb_delta_models";
+	public static String QUEUE_MODELS_DELETE = "hdb_models_delete";
 	
-	public static String FUSEKI_HOST = "http://localhost:3030";
+	public static String FUSEKI_HOST = "http://localhost:3030/ds";
 	public static String FUSEKI_BASEURI = "http://www.modaclouds.eu/historydb/";
 	public static String FUSEKI_MONITORING = FUSEKI_BASEURI + "monitoring-data/";
 	public static String FUSEKI_MODEL = FUSEKI_BASEURI + "model/";
 	public static String FUSEKI_MODEL_DAILY = FUSEKI_BASEURI + "meta/model/";
-	public static String FUSEKI_DELTAS_MODEL = FUSEKI_BASEURI + "model/deltas/";
-	public static String FUSEKI_DELTAS_MODEL_DAILY = FUSEKI_BASEURI + "meta/model/deltas/";
+	public static String FUSEKI_DELTAS_MODEL = FUSEKI_BASEURI + "model/updates/";
+	public static String FUSEKI_DELTAS_MODEL_DAILY = FUSEKI_BASEURI + "meta/model/updates/";
+	public static String FUSEKI_MODELS_DELETE = FUSEKI_BASEURI + "model/cancellations/";
+	public static String FUSEKI_MODELS_DELETE_DAILY = FUSEKI_BASEURI + "meta/model/cancellations/";
 	
 	public static final String EXAMPLE_RESULT_FILE = "example-result.rdf";
 	public static final String EXAMPLE_MODEL_FILE = "example-model.json";
@@ -51,6 +54,7 @@ public abstract class Configuration {
 		prop.put("QUEUE_RESULTS", QUEUE_RESULTS);
 		prop.put("QUEUE_MODELS", QUEUE_MODELS);
 		prop.put("QUEUE_DELTA_MODELS", QUEUE_DELTA_MODELS);
+		prop.put("QUEUE_MODELS_DELETE", QUEUE_MODELS_DELETE);
 		prop.put("QUEUE_HOST", QUEUE_HOST);
 		prop.put("FUSEKI_HOST", FUSEKI_HOST);
 		prop.put("FUSEKI_BASEURI", FUSEKI_BASEURI);
@@ -59,6 +63,8 @@ public abstract class Configuration {
 		prop.put("FUSEKI_MODEL_DAILY", FUSEKI_MODEL_DAILY);
 		prop.put("FUSEKI_DELTAS_MODEL", FUSEKI_DELTAS_MODEL);
 		prop.put("FUSEKI_DELTAS_MODEL_DAILY", FUSEKI_DELTAS_MODEL_DAILY);
+		prop.put("FUSEKI_MODELS_DELETE", FUSEKI_MODELS_DELETE);
+		prop.put("FUSEKI_MODELS_DELETE_DAILY", FUSEKI_MODELS_DELETE_DAILY);
 
 		prop.store(fos, "HDB configuration properties");
 		fos.flush();
@@ -75,6 +81,7 @@ public abstract class Configuration {
 		QUEUE_RESULTS = prop.getProperty("QUEUE_RESULTS", QUEUE_RESULTS);
 		QUEUE_MODELS = prop.getProperty("QUEUE_MODELS", QUEUE_MODELS);
 		QUEUE_DELTA_MODELS = prop.getProperty("QUEUE_DELTA_MODELS", QUEUE_DELTA_MODELS);
+		QUEUE_MODELS_DELETE = prop.getProperty("QUEUE_MODELS_DELETE", QUEUE_MODELS_DELETE);
 		QUEUE_HOST = prop.getProperty("QUEUE_HOST", QUEUE_HOST);
 		FUSEKI_HOST = prop.getProperty("FUSEKI_HOST", FUSEKI_HOST);
 		FUSEKI_BASEURI = prop.getProperty("FUSEKI_BASEURI", FUSEKI_BASEURI);
@@ -83,10 +90,12 @@ public abstract class Configuration {
 		FUSEKI_MODEL_DAILY = prop.getProperty("FUSEKI_BASEURI_MODEL_DAILY", FUSEKI_MODEL_DAILY);
 		FUSEKI_DELTAS_MODEL = prop.getProperty("FUSEKI_DELTAS_MODEL", FUSEKI_DELTAS_MODEL);
 		FUSEKI_DELTAS_MODEL_DAILY = prop.getProperty("FUSEKI_DELTAS_MODEL_DAILY", FUSEKI_DELTAS_MODEL_DAILY);
+		FUSEKI_MODELS_DELETE = prop.getProperty("FUSEKI_MODELS_DELETE", FUSEKI_MODELS_DELETE);
+		FUSEKI_MODELS_DELETE_DAILY = prop.getProperty("FUSEKI_MODELS_DELETE_DAILY", FUSEKI_MODELS_DELETE_DAILY);
 		try {
 			DEFAULT_PORT = Integer.parseInt(prop.getProperty("DEFAULT_PORT", Integer.toString(DEFAULT_PORT)));
 		} catch (NumberFormatException e) {
-			logger.error("Argh!", e);
+			logger.error("Error while parsing the default port value!", e);
 		}
 	}
 }

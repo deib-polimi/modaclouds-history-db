@@ -1,12 +1,9 @@
 package it.polimi.modaclouds.hdb.metrics_observer.rest;
 
 import it.polimi.modaclouds.hdb.metrics_observer.Configuration;
-import it.polimi.modaclouds.hdb.metrics_observer.Queue;
 
 import org.restlet.Component;
 import org.restlet.data.Protocol;
-import org.restlet.resource.Post;
-import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,89 +20,43 @@ public class Listener extends Thread {
     
     private static final Logger logger = LoggerFactory.getLogger(Listener.class);
     
-    public Listener(int port, String resultsPath, String modelsPath) {
+    private int port;
+    
+    public Listener(int port) {
         component = new Component();
+        this.port = port;
         component.getServers().add(Protocol.HTTP, port);
         component.getClients().add(Protocol.FILE);
-        component.getDefaultHost().attach(resultsPath, Listener.ResultsServerResource.class);
-        logger.debug("Listener created for port {} and path {}.", port, resultsPath);
-        component.getDefaultHost().attach(modelsPath, Listener.ModelsServerResource.class);
-        logger.debug("Listener created for port {} and path {}.", port, modelsPath);
     }
     
-    public static class ResultsServerResource extends ServerResource {
-        @Post
-        public String addResult(String message) {
-        	// Print the requested URI path
-            String res = "Resource URI  : " + getReference() + '\n' + "Root URI      : "
-                    + getRootRef() + '\n' + "Routed part   : "
-                    + getReference().getBaseRef() + '\n' + "Remaining part: "
-                    + getReference().getRemainingPart();
-        	logger.debug("\n{}", res);
-        	
-            try {
-                Queue queue = new Queue(Configuration.QUEUE_RESULTS);
-                queue.addMessage(message);
-                queue.close();
-                return "Message added to the queue!\n" + message;
-            } catch (Exception e) {
-                logger.error("Argh!", e);
-                return "Error while adding the message to the queue!\n" + message;
-            }
-        }
-    }
-    
-    public static class ModelsServerResource extends ServerResource {
-        @Post
-        public String addDeltaModel(String message) {
-        	// Print the requested URI path
-            String res = "Resource URI  : " + getReference() + '\n' + "Root URI      : "
-                    + getRootRef() + '\n' + "Routed part   : "
-                    + getReference().getBaseRef() + '\n' + "Remaining part: "
-                    + getReference().getRemainingPart();
-        	logger.debug("\n{}", res);
-        	
-            try {
-                Queue queue = new Queue(Configuration.QUEUE_DELTA_MODELS);
-                queue.addMessage(message);
-                queue.close();
-                return "Message added to the queue!\n" + message;
-            } catch (Exception e) {
-                logger.error("Argh!", e);
-                return "Error while adding the message to the queue!\n" + message;
-            }
-        }
+    public boolean add(String path, Class<? extends ServerResource> clazz) {
+    	component.getDefaultHost().attach(path, clazz);
+        logger.debug("Listener created for port {} and path {}.", port, path);
         
-        @Put
-        public String addModel(String message) {
-        	// Print the requested URI path
-            String res = "Resource URI  : " + getReference() + '\n' + "Root URI      : "
-                    + getRootRef() + '\n' + "Routed part   : "
-                    + getReference().getBaseRef() + '\n' + "Remaining part: "
-                    + getReference().getRemainingPart();
-        	logger.debug("\n{}", res);
-        	
-            try {
-                Queue queue = new Queue(Configuration.QUEUE_MODELS);
-                queue.addMessage(message);
-                queue.close();
-                return "Message added to the queue!\n" + message;
-            } catch (Exception e) {
-                logger.error("Argh!", e);
-                return "Error while adding the message to the queue!\n" + message;
-            }
-        }
+        return true;
+    }
+    
+    public Listener() {
+        this(Configuration.DEFAULT_PORT);
     }
     
     public static int RUNNING_TIME = 100000;
     
+    private boolean started = false;
+    
+    public boolean isStarted() {
+    	return started;
+    }
+    
     @Override
     public void run() {
+    	started = true;
+    	
     	try {
 			component.start();
 			logger.debug("Component started.");
 		} catch (Exception e) {
-			logger.error("Argh!", e);
+			logger.error("Error while starting the listener!", e);
 		}
     	if (RUNNING_TIME > 0) {
 	    	try {
@@ -115,17 +66,11 @@ public class Listener extends Thread {
 				component.stop();
 				logger.debug("Component stopped.");
 			} catch (Exception e) {
-				logger.error("Argh!", e);
+				logger.error("Error while stopping the listener!", e);
 			}
     	}
+    	
+    	started = false;
     }
     
-    public Listener() {
-        this(Configuration.DEFAULT_PORT, Configuration.DEFAULT_PATH, Configuration.DEFAULT_PATH_MODEL);
-    }
-    
-    public static void main(String[] args) {
-    	Listener.RUNNING_TIME = -1;
-        new Listener().start();
-    }
 }
