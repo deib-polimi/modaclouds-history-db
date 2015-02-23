@@ -34,6 +34,8 @@ public class Main {
 		MetricsObserver mo = new MetricsObserver();
 		mo.start();
 		logger.debug("MetricsObserver started!");
+		
+		logger.info("HDB Metrics Observer started!");
         
 		if (useFakeData) {
 	        try {
@@ -46,7 +48,6 @@ public class Main {
 	        Producer.test(30);
 		}
         
-        logger.info("HDB Metrics Observer started!");
 	}
 	
 	public static void perform() {
