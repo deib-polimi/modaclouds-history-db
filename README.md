@@ -9,6 +9,7 @@ A **queue** (usually [RabbitMQ](http://www.rabbitmq.com)) is used for decoupling
 Useful links to the documentation:
 * [User Manual](https://github.com/deib-polimi/modaclouds-history-db/blob/master/doc/user-manual.md)
 * [API reference](https://github.com/deib-polimi/modaclouds-history-db/blob/master/doc/api.md)
+* [DataStore reference](https://github.com/deib-polimi/modaclouds-history-db/blob/master/doc/datastore.md)
 * [Install Guide](https://github.com/deib-polimi/modaclouds-history-db/blob/master/doc/install.md)
 
 ## ChangeLog

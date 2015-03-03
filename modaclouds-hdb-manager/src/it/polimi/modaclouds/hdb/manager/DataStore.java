@@ -22,6 +22,7 @@ import it.polimi.modaclouds.monitoring.kb.api.DeserializationException;
 import it.polimi.modaclouds.monitoring.kb.api.FusekiKBAPI;
 import it.polimi.modaclouds.monitoring.kb.api.SerializationException;
 import it.polimi.modaclouds.monitoring.kb.api.Util;
+import it.polimi.modaclouds.qos_models.monitoring_ontology.MO;
 import it.polimi.modaclouds.qos_models.monitoring_ontology.MOVocabulary;
 
 import java.util.Calendar;
@@ -56,7 +57,7 @@ public class DataStore {
 		
 		if (knowledgeBaseModels == null) {
 			knowledgeBaseModels = new FusekiKBAPI(host);
-//			knowledgeBaseModels.uploadOntology(MO.model, "models"); TODO verificare se serve davvero o va bene lasciarla disabilitata
+			knowledgeBaseModels.uploadOntology(MO.model, "models");
 		}
 		
 		if (datasetAccessor == null) {

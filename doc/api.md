@@ -6,7 +6,7 @@
 
 ### Monitoring Data
 
-- **[<code>POST</code> /results](rest/monitoring-data/POST-monitoring-data.md)**
+- **[<code>POST</code> /monitoringdata](rest/monitoring-data/POST-monitoring-data.md)**
 
 ### Model
 
@@ -16,4 +16,4 @@
 
 ## Java API
 
-See the [javadoc](http://deib-polimi.github.io/modaclouds-monitoring-manager/).
+See the [javadoc](https://github.com/deib-polimi/modaclouds-history-db).
