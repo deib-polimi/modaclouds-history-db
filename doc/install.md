@@ -8,7 +8,7 @@ Just unzip the package and you'll have all the needed files:
 * `historydb.jar`: the java package containing the actual files
 * `LICENSE`: for the license agreements.
 
-To see how to run the component please check the [User Manual](../user-manual.md).
+To see how to run the component please check the [User Manual](user-manual.md).
 
 ## Needed softwares
 * RabbitMQ (http://www.rabbitmq.com/download.html)
