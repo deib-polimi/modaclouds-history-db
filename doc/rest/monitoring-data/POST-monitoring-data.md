@@ -3,12 +3,12 @@
 # Results
 
 ```
-POST /results
+POST /monitoringdata
 ```
 
 ## Description
 
-Send results to the metrics observer.
+Send a monitoring datum to the metrics observer.
 
 ## URL Parameters
 

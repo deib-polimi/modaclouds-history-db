@@ -4,3 +4,4 @@ Documentation table of contents
 
 * [User Manual](user-manual.md)
 * [API Reference](api.md)
+* [Install Guide](install.md)
