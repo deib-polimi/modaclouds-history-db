@@ -36,7 +36,7 @@ public abstract class Configuration {
 	
 	public static int DEFAULT_PORT = 31337;
 	
-	public static final String DEFAULT_PATH = "/results";
+	public static final String DEFAULT_PATH = "/monitoringdata";
 	public static final String DEFAULT_PATH_MODEL = "/model/resources";
 	
 	public static final String DEFAULT_BASEPATH = "http://localhost";
