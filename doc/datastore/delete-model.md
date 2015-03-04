@@ -2,7 +2,7 @@
 
 # Delete Model
 
-When deleting a model from the system (using the REST API [DELETE-model](../../doc/rest/model/DELETE-model), a number of triples are inserted in the datastore.
+When deleting a model from the system (using the REST API [DELETE-model](../../doc/rest/model/DELETE-model)), a number of triples are inserted in the datastore.
 
 Let's assume that:
 
