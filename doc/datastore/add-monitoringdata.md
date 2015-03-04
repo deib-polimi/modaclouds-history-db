@@ -1,8 +1,8 @@
-[Documentation table of contents](../../toc.md) / [DataStore Reference](../../datastore.md) / add-monitoringdata
+[Documentation table of contents](../toc.md) / [DataStore Reference](../datastore.md) / add-monitoringdata
 
 # Add Monitoring Data
 
-When adding a new monitoring datum to the system (using the REST API [POST-monitoring-data](../../doc/rest/monitoring-data/POST-monitoring-data)), a number of triples are inserted in the datastore.
+When adding a new monitoring datum to the system (using the REST API [POST-monitoring-data](../rest/monitoring-data/POST-monitoring-data)), a number of triples are inserted in the datastore.
 
 Let's assume that the element exposes:
 
