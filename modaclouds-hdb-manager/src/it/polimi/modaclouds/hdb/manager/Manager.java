@@ -60,7 +60,7 @@ public class Manager extends Thread {
 			try {
 				msg = queue.getMessage();
 			} catch (Exception e) {
-				logger.error("Argh!", e);
+				logger.error("Error while getting the message from the queue!", e);
 			}
 			if (msg == null)
 				continue;
@@ -68,11 +68,6 @@ public class Manager extends Thread {
 			parseMessage(msg);
 			
 			y = System.currentTimeMillis();
-		}
-		try{
-			queue.close();
-		} catch (Exception e) {
-			logger.error("Error while closing the queue!", e);
 		}
 	}
 	

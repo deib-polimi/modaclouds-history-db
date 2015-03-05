@@ -56,7 +56,6 @@ public class MetricsObserver {
             try {
                 Queue queue = new Queue(Configuration.QUEUE_RESULTS);
                 queue.addMessage(message);
-                queue.close();
                 
                 logger.info("Monitoring data added to the queue.");
                 
@@ -81,7 +80,6 @@ public class MetricsObserver {
             try {
                 Queue queue = new Queue(Configuration.QUEUE_DELTA_MODELS);
                 queue.addMessage(message);
-                queue.close();
                 
                 logger.info("Update to a model added to the queue.");
                 
@@ -104,7 +102,6 @@ public class MetricsObserver {
             try {
                 Queue queue = new Queue(Configuration.QUEUE_MODELS);
                 queue.addMessage(message);
-                queue.close();
                 
                 logger.info("Model added to the queue.");
                 
@@ -134,7 +131,6 @@ public class MetricsObserver {
             try {
                 Queue queue = new Queue(Configuration.QUEUE_MODELS_DELETE);
                 queue.addMessage(id);
-                queue.close();
                 
                 logger.info("Cancellation of a model added to the queue.");
                 

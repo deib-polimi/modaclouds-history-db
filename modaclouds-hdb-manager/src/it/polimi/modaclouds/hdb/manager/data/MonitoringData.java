@@ -148,4 +148,21 @@ public class MonitoringData {
 		
 		return null;
 	}
+	
+	public static com.hp.hpl.jena.rdf.model.Model defaultGraphStatement(String graphUrl, long timestamp) {
+		com.hp.hpl.jena.rdf.model.Model m = ModelFactory.createDefaultModel();
+		
+		com.hp.hpl.jena.rdf.model.Resource   subject   = null;
+		com.hp.hpl.jena.rdf.model.Property   property  = null;
+		com.hp.hpl.jena.rdf.model.Statement  statement = null;
+		
+		subject = m.createResource("mo:" + Long.toString(timestamp));
+		
+		property = m.createProperty("http://www.modaclouds.eu/rdfs/1.0/historydb#add-monitoring-data");
+		
+		statement = m.createStatement(subject, property, graphUrl);
+		m.add(statement);
+		
+		return m;
+	}
 }

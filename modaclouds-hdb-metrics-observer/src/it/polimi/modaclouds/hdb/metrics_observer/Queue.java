@@ -40,6 +40,7 @@ import com.rabbitmq.client.ShutdownSignalException;
 public class Queue {
 	
 	private String queueName;
+	private String queueHost;
 	
 	private Channel channel;
 	private Connection connection;
@@ -48,19 +49,33 @@ public class Queue {
 	
 	public Queue(String queueHost, String queueName) throws IOException {
 		this.queueName = queueName;
+		this.queueHost = queueHost;
+	}
+	
+	private boolean connected = false;
+	
+	private void connect() throws IOException {
+		if (connected)
+			return;
 		
 		ConnectionFactory factory = new ConnectionFactory();
 	    factory.setHost(queueHost);
 	    connection = factory.newConnection();
 	    channel = connection.createChannel();
 	    logger.debug("Connected to the queue {} on {}.", queueName, queueHost);
+	    
+	    connected = true;
 	}
 	
 	public void addMessage(String message) throws IOException {
+		connect();
+		
 		channel.queueDeclare(queueName, true, false, false, null);
 		
 		channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
 		logger.debug("Message added:\n{}", message);
+		
+		close();
 	}
 	
 	public String getMessage() throws IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
@@ -68,30 +83,42 @@ public class Queue {
 	}
 	
 	public String getMessage(int timeout) throws IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+		connect();
+		
 		channel.queueDeclare(queueName, true, false, false, null);
 		
 		QueueingConsumer consumer = new QueueingConsumer(channel);
-	    channel.basicConsume(queueName, true, consumer);
+	    channel.basicConsume(queueName, /*true*/false, consumer);
 
-	    QueueingConsumer.Delivery delivery;
+	    QueueingConsumer.Delivery delivery = null;
 	    if (timeout > 0)
 	    	delivery = consumer.nextDelivery(timeout);
 	    else
 	    	delivery = consumer.nextDelivery();
+	    
 	    if (delivery == null)
 	    	return null;
 	    
+	    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+	    
 	    String message = new String(delivery.getBody());
 	    logger.debug("Message received:\n{}", message);
+	    
+	    close();
 	    
 	    return message;
 	}
 	
 	public int count() {
 		try {
+			connect();
+			
 			AMQP.Queue.DeclareOk dok = channel.queueDeclare(queueName, true, false, false, null);
 			int count = dok.getMessageCount();
 			logger.debug("Messages in the queue: {}.", count);
+			
+			close();
+			
 			return count;
 		} catch (Exception e) {
 			logger.error("Error while checking the number of messages in the queue!", e);
@@ -99,10 +126,15 @@ public class Queue {
 		}
 	}
 	
-	public void close() throws IOException {
+	private void close() throws IOException {
+		if (!connected)
+			return;
+		
 		channel.close();
 		connection.close();
 		logger.debug("Connection to the queue closed.");
+		
+		connected = false;
 	}
 	
 	public Queue(String queueName) throws IOException {

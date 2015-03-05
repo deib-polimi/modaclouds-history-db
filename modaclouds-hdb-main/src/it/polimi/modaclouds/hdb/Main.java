@@ -62,7 +62,7 @@ public class Main {
 			logger.error("Error while waiting!", e);
 		}
 		
-		it.polimi.modaclouds.hdb.metrics_observer.Main.perform(args, true);
+		it.polimi.modaclouds.hdb.metrics_observer.Main.perform(args, false);
 	}
 	
 	public static void perform() {

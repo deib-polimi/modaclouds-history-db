@@ -82,16 +82,20 @@ public class DataStore {
 		if (r == null)
 			return false;
 		
-		String graphUri = Configuration.FUSEKI_MONITORING + hourTimestamp(r.getTimestamp());
+		long hourTimestamp = hourTimestamp(r.getTimestamp());
 		
-		boolean res = add(graphUri, r.getModel());
+		String graphUri = Configuration.FUSEKI_MONITORING + hourTimestamp;
 		
-		if (res)
+		boolean res1 = add(graphUri, r.getModel());
+		
+		boolean res2 = add("default", MonitoringData.defaultGraphStatement(graphUri, hourTimestamp));
+		
+		if (res1)
 			logger.info("Monitoring data added to the datastore.");
 		else
 			logger.error("Error while adding the monitoring data added to the datastore.");
 		
-		return res;
+		return res1 && res2;
 		
 	}
 	
@@ -104,7 +108,7 @@ public class DataStore {
 		try {
 			long timestamp = System.currentTimeMillis();
 			
-//			String graphUri = Configuration.FUSEKI_MODEL + timestamp;
+			String graphUri = Configuration.FUSEKI_MODEL + timestamp;
 			
 			String bak = it.polimi.modaclouds.monitoring.kb.api.Config.graphsNamespace;
 			
@@ -114,19 +118,22 @@ public class DataStore {
 			knowledgeBaseModels.add(m.getResources(), MOVocabulary.resourceIdParameterName, graphName);
 			boolean res1 = true; // we suppose that it always works
 			
-			logger.debug("Model added to the datastore.");
+			if (res1)
+				logger.info("New model added to the datastore.");
+			else
+				logger.error("Error while adding the model to the datastore.");
 			
 			it.polimi.modaclouds.monitoring.kb.api.Config.graphsNamespace = bak;
 			
 			String dailyGraphUri = Configuration.FUSEKI_MODEL_DAILY + dayTimestamp(timestamp);
 			boolean res2 = add(dailyGraphUri, Model.getNameModel(Configuration.FUSEKI_MODEL + graphName, timestamp));
 			
-			if (res2)
-				logger.info("Info on the model added in the daily graph in the datastore.");
-			else
+			boolean res3 = add("default", Model.defaultGraphStatementAdd(graphUri, hourTimestamp(timestamp)));
+			
+			if (!res2)
 				logger.error("Error while adding the info on the model in the daily graph in the datastore.");
 			
-			return res1 && res2;
+			return res1 && res2 && res3;
 		} catch (SerializationException | DeserializationException e) {
 			logger.error("Error while saving the model to the datastore!", e);
 		}
@@ -146,19 +153,19 @@ public class DataStore {
 		boolean res1 = add(graphUri, Model.getDeleteModel(id, timestamp));
 		
 		if (res1)
-			logger.info("Info on the cancellation of a model added in the datastore.");
+			logger.info("Cancellation of a model added to the datastore.");
 		else
 			logger.error("Error while adding the info on the cancellation of a model in the datastore.");
 		
 		String dailyGraphUri = Configuration.FUSEKI_MODELS_DELETE_DAILY + dayTimestamp(timestamp);
 		boolean res2 = add(dailyGraphUri, Model.getNameModel(Configuration.FUSEKI_MODELS_DELETE + timestamp, timestamp));
 		
-		if (res2)
-			logger.info("Info on the cancellation of a model added in the daily graph in the datastore.");
-		else
+		boolean res3 = add("default", Model.defaultGraphStatementDelete(graphUri, hourTimestamp(timestamp)));
+		
+		if (!res2)
 			logger.error("Error while adding the info on the cancellation of a model in the daily graph in the datastore.");
 		
-		return res1 && res2;
+		return res1 && res2 && res3;
 	}
 	
 	public boolean addDeltaModel(String jsonDatum) {
@@ -170,7 +177,7 @@ public class DataStore {
 		try {
 			long timestamp = System.currentTimeMillis();
 			
-//			String graphUri = Configuration.FUSEKI_DELTAS_MODEL + timestamp;
+			String graphUri = Configuration.FUSEKI_DELTAS_MODEL + timestamp;
 			
 			String bak = it.polimi.modaclouds.monitoring.kb.api.Config.graphsNamespace;
 
@@ -179,6 +186,7 @@ public class DataStore {
 			
 			knowledgeBaseModels.add(m.getResources(), MOVocabulary.resourceIdParameterName, graphName);
 			boolean res1 = true; // we suppose that it always works
+			
 			logger.info("Updated model added to the datastore.");
 			
 			it.polimi.modaclouds.monitoring.kb.api.Config.graphsNamespace = bak;
@@ -186,12 +194,12 @@ public class DataStore {
 			String dailyGraphUri = Configuration.FUSEKI_DELTAS_MODEL_DAILY + dayTimestamp(timestamp);
 			boolean res2 = add(dailyGraphUri, Model.getNameModel(Configuration.FUSEKI_DELTAS_MODEL + graphName, timestamp));
 			
-			if (res2)
-				logger.info("Info on the update of a model added in the daily graph in the datastore.");
-			else
+			boolean res3 = add("default", Model.defaultGraphStatementUpdate(graphUri, hourTimestamp(timestamp)));
+			
+			if (!res2)
 				logger.error("Error while adding the info on the update of a model in the daily graph in the datastore.");
 			
-			return res1 && res2;
+			return res1 && res2 && res3;
 		} catch (SerializationException | DeserializationException e) {
 			logger.error("Error while saving the information on the update of a model!", e);
 		}
@@ -245,7 +253,10 @@ public class DataStore {
 		}
 		
 		public void run() {
-			datasetAccessor.add(graphUri, model);
+			if (graphUri.equals("default"))
+				datasetAccessor.add(model);
+			else
+				datasetAccessor.add(graphUri, model);
 			logger.debug("Model added to the datastore.");
 		}
 
