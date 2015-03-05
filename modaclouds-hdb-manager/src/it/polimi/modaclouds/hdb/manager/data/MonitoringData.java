@@ -41,7 +41,7 @@ public class MonitoringData {
 	private com.hp.hpl.jena.rdf.model.Model model;
 	private long timestamp;
 	private String metric;
-	private double value;
+	private String value;
 	private String resourceId;
 
 	public String getMetric() {
@@ -50,10 +50,10 @@ public class MonitoringData {
 	public void setMetric(String metric) {
 		this.metric = metric;
 	}
-	public double getValue() {
+	public String getValue() {
 		return value;
 	}
-	public void setValue(double value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 	public String getResourceId() {
@@ -137,13 +137,9 @@ public class MonitoringData {
 		    	}
 		    else if (name.equalsIgnoreCase("metric"))
 		    	r.metric = value;
-		    else if (name.equalsIgnoreCase("value"))
-		    	try {
-		    		r.value = Double.valueOf(value);
-		    	} catch (NumberFormatException e) {
-		    		logger.error("Argh!", e);
-		    	}
-		    else if (name.equalsIgnoreCase("resourceId"))
+		    else if (name.equalsIgnoreCase("value")) {
+		    	r.value = value;
+		    } else if (name.equalsIgnoreCase("resourceId"))
 		    	r.resourceId = value;
 		}
 		
