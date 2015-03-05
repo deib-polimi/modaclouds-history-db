@@ -10,5 +10,8 @@ The assumption that no other model is considered at the exact same time is done.
 
 The graph will contain a number of triples, and these are created using the [modaclouds-knowledge-base-api](https://github.com/deib-polimi/modaclouds-knowledge-base-api). All the subjects will have the base prefix `http://www.modaclouds.eu/rdfs/1.0/entities#`.
 
-Another graph with the name associated to the hour in which the timestamp is contained (e.g. `http://www.modaclouds.eu/historydb/meta/model/updates/1425398400000` for the example above, where `1425398400000` corresponds to the date *Tue, 03 Mar 2015 17:00:00 GMT+1:00*) is created or used if it already exists.
+Another graph with the name associated to the day in which the timestamp is contained (e.g. `http://www.modaclouds.eu/historydb/meta/model/updates/1425340800000` for the example above, where `1425340800000` corresponds to the date *Tue, 03 Mar 2015 00:00:00 GMT+1:00*) is created or used if it already exists.
 Only one triple is added, and this has as the subject the name of the graph considered before (e.g. `http://www.modaclouds.eu/historydb/model/updates/1425400773874`), the predicate `<mo:timestamp>` and the actual timestamp as the object of the triple (e.g. `1425400773874`).
+
+Lastly, in the `default` graph, one tuple is added, with the subject that is the hour in which the timestamp is contained (e.g. `mo:1425398400000` for the example above, where `1425398400000` corresponds to the date *Tue, 03 Mar 2015 17:00:00 GMT+1:00*),
+the predicate is the constant `http://www.modaclouds.eu/rdfs/1.0/historydb#update-model` representing univocally the function, and the object being the uri of the graph (e.g. `http://www.modaclouds.eu/historydb/model/updates/1425400773874`).
