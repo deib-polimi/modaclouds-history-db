@@ -156,11 +156,11 @@ public class MonitoringData {
 		com.hp.hpl.jena.rdf.model.Property   property  = null;
 		com.hp.hpl.jena.rdf.model.Statement  statement = null;
 		
-		subject = m.createResource("mo:" + Long.toString(timestamp));
+		subject = m.createResource(graphUrl);
 		
-		property = m.createProperty("http://www.modaclouds.eu/rdfs/1.0/historydb#add-monitoring-data");
+		property = m.createProperty("mo:timestamp");
 		
-		statement = m.createStatement(subject, property, graphUrl);
+		statement = m.createLiteralStatement(subject, property, timestamp);
 		m.add(statement);
 		
 		return m;
