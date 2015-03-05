@@ -19,5 +19,40 @@ The triples added have all the same subject, the unique id (that here is written
 
 All the predicates have the `http://www.modaclouds.eu/rdfs/1.0/monitoringdata#` prefix (so e.g. for value we'll have `http://www.modaclouds.eu/rdfs/1.0/monitoringdata#value`).
 
-Lastly, in the `default` graph, one tuple is added, with the subject that is the hour in which the timestamp is contained (e.g. `mo:1425398400000` for the example above, where `1425398400000` corresponds to the date *Tue, 03 Mar 2015 17:00:00 GMT+1:00*),
-the predicate is the constant `http://www.modaclouds.eu/rdfs/1.0/historydb#add-monitoring-data` representing univocally the function, and the object being the uri of the graph (e.g. `http://www.modaclouds.eu/historydb/monitoring-data/1425398400000`).
+Lastly, in the `default` graph, one tuple is added, with:
+
+* the subject that is the URI of the graph (e.g. `http://www.modaclouds.eu/historydb/monitoring-data/1425398400000`),
+* the predicate is the constant `mo:timestamp`, and
+* the object is the hour in which the timestamp is contained (e.g. `1425398400000` for the example above, where `1425398400000` corresponds to the date *Tue, 03 Mar 2015 17:00:00 GMT+1:00*).
+
+
+## Examples of Query
+
+Here are some examples of SPARQL query:
+
+* find all the monitoring data inserted:
+
+```sparql
+SELECT * {
+    ?s <mo:timestamp> ?o
+    FILTER (regex(str(?s), "monitoring"))
+}
+```
+
+* find all the monitoring data inserted in a specific hourly timestamp:
+
+```sparql
+SELECT * {
+    ?s <mo:timestamp> ?o 
+    FILTER (?o = 1425574800000 && regex(str(?s), "monitoring"))
+}
+```
+
+* find all the monitoring data inserted in a range of hourly timestamps:
+
+```sparql
+SELECT * {
+    ?s <mo:timestamp> ?o
+    FILTER (?o >= 1425574600000 && ?o <= 1425574900000 && regex(str(?s), "monitoring"))
+}
+```

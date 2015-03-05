@@ -13,5 +13,39 @@ The graph will contain a number of triples, and these are created using the [mod
 Another graph with the name associated to the hour in which the timestamp is contained (e.g. `http://www.modaclouds.eu/historydb/meta/model/1425340800000` for the example above, where `1425340800000` corresponds to the date *Tue, 03 Mar 2015 00:00:00 GMT+1:00*) is created or used if it already exists.
 Only one triple is added, and this has as the subject the name of the graph considered before (e.g. `http://www.modaclouds.eu/historydb/model/1425400773874`), the predicate `<mo:timestamp>` and the actual timestamp as the object of the triple (e.g. `1425400773874`).
 
-Lastly, in the `default` graph, one tuple is added, with the subject that is the hour in which the timestamp is contained (e.g. `mo:1425398400000` for the example above, where `1425398400000` corresponds to the date *Tue, 03 Mar 2015 17:00:00 GMT+1:00*),
-the predicate is the constant `http://www.modaclouds.eu/rdfs/1.0/historydb#add-model` representing univocally the function, and the object being the uri of the graph (e.g. `http://www.modaclouds.eu/historydb/model/1425400773874`).
+Lastly, in the `default` graph, one tuple is added, with:
+
+* the subject that is the URI of the graph (e.g. `http://www.modaclouds.eu/historydb/model/1425400773874`),
+* the predicate is the constant `mo:timestamp`, and
+* the object is the hour in which the timestamp is contained (e.g. `1425398400000` for the example above, where `1425398400000` corresponds to the date *Tue, 03 Mar 2015 17:00:00 GMT+1:00*).
+
+## Examples of Query
+
+Here are some examples of SPARQL query:
+
+* find all the model inserted:
+
+```sparql
+SELECT * {
+    ?s <mo:timestamp> ?o
+    FILTER (regex(str(?s), "model") && !(regex(str(?s), "model/updates")) && !(regex(str(?s), "model/cancellations")))
+}
+```
+
+* find all the model inserted in a specific hourly timestamp:
+
+```sparql
+SELECT * {
+    ?s <mo:timestamp> ?o 
+    FILTER (?o = 1425574800000 && regex(str(?s), "model") && !(regex(str(?s), "model/updates")) && !(regex(str(?s), "model/cancellations")))
+}
+```
+
+* find all the model inserted in a range of hourly timestamps:
+
+```sparql
+SELECT * {
+    ?s <mo:timestamp> ?o
+    FILTER (?o >= 1425574600000 && ?o <= 1425574900000 && regex(str(?s), "model") && !(regex(str(?s), "model/updates")) && !(regex(str(?s), "model/cancellations")))
+}
+```
