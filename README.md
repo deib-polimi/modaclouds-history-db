@@ -14,7 +14,10 @@ Useful links to the documentation:
 
 ## ChangeLog
 [v0.1.0](https://github.com/deib-polimi/modaclouds-history-db/blob/master/bin/historydb-0.1.0.zip):
+
 * First (actually and hopefully) working version. The previous one wasn't saving all the messages received.
 * Added some other information in the "default" graph, as described in the datastore guide.
+
 [v0.0.1-SNAPSHOT](https://github.com/deib-polimi/modaclouds-history-db/blob/master/bin/historydb-0.0.1-SNAPSHOT.zip):
+
 * First beta release!
