@@ -113,9 +113,13 @@ public class MonitoringData {
 		    
 		    String name = predicate.toString();
 		    int i = 0;
-		    if (( i = name.indexOf('#') ) < 0)
+		    if (( i = name.indexOf('#') ) > 0)
+		    	name = name.substring(i + 1);
+		    else if (( i = name.lastIndexOf('/') ) > 0)
+		    	name = name.substring(i + 1);
+		    else
 		    	continue;
-		    name = name.substring(i + 1);
+		    
 		    
 		    String value = "";
 		    
