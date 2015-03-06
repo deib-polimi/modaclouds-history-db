@@ -13,6 +13,16 @@ Useful links to the documentation:
 * [Install Guide](https://github.com/deib-polimi/modaclouds-history-db/blob/master/doc/install.md)
 
 ## ChangeLog
+[v0.1.2](https://github.com/deib-polimi/modaclouds-history-db/blob/master/bin/historydb-0.1.2.zip):
+
+* Bug fixes.
+* Better handling of the queue (maybe fixing some "too many files opened" bug).
+* Two new parameters to the script "historydb" for launching fake messages at the beginning of the tool.
+
+[v0.1.1](https://github.com/deib-polimi/modaclouds-history-db/blob/master/bin/historydb-0.1.1.zip):
+
+* Few bug fixes.
+
 [v0.1.0](https://github.com/deib-polimi/modaclouds-history-db/blob/master/bin/historydb-0.1.0.zip):
 
 * First (actually and hopefully) working version. The previous one wasn't saving all the messages received.
