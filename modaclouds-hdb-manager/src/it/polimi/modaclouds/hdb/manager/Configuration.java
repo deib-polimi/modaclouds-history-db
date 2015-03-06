@@ -120,10 +120,10 @@ public abstract class Configuration {
 		String queuePort = System.getenv("MODACLOUDS_HDB_QUEUE_ENDPOINT_PORT");
 		setQueueEndpoint(queueIp, queuePort);
 		
-		String kbUrl = System.getenv("MODACLOUDS_HDB_KB_ENDPOINT_IP");
-		String kbPort = System.getenv("MODACLOUDS_HDB_KB_ENDPOINT_PORT");
-		String dataset = System.getenv("MODACLOUDS_HDB_KB_DATASET_PATH");
-		setKBEndpoint(kbUrl, kbPort, dataset);
+		String kbUrl = System.getenv("MODACLOUDS_HDB_DB_ENDPOINT_IP");
+		String kbPort = System.getenv("MODACLOUDS_HDB_DB_ENDPOINT_PORT");
+		String dataset = System.getenv("MODACLOUDS_HDB_DB_DATASET_PATH");
+		setDBEndpoint(kbUrl, kbPort, dataset);
 		
 		String port = System.getenv("MODACLOUDS_HDB_LISTENER_PORT");
 		setPort(port);
@@ -134,10 +134,10 @@ public abstract class Configuration {
 		String queuePort = System.getProperty("MODACLOUDS_HDB_QUEUE_ENDPOINT_PORT");
 		setQueueEndpoint(queueIp, queuePort);
 		
-		String kbUrl = System.getProperty("MODACLOUDS_HDB_KB_ENDPOINT_IP");
-		String kbPort = System.getProperty("MODACLOUDS_HDB_KB_ENDPOINT_PORT");
-		String dataset = System.getProperty("MODACLOUDS_HDB_KB_DATASET_PATH");
-		setKBEndpoint(kbUrl, kbPort, dataset);
+		String kbUrl = System.getProperty("MODACLOUDS_HDB_DB_ENDPOINT_IP");
+		String kbPort = System.getProperty("MODACLOUDS_HDB_DB_ENDPOINT_PORT");
+		String dataset = System.getProperty("MODACLOUDS_HDB_DB_DATASET_PATH");
+		setDBEndpoint(kbUrl, kbPort, dataset);
 		
 		String port = System.getProperty("MODACLOUDS_HDB_LISTENER_PORT");
 		setPort(port);
@@ -154,12 +154,12 @@ public abstract class Configuration {
 				setQueueEndpoint(null, args[i+1]);
 			} else if (args[i].equals("-queueport") && args.length >= i+2) {
 				setQueueEndpoint(null, args[i+1]);
-			} else if (args[i].equals("-kbip") && args.length >= i+2) {
-				setKBEndpoint(args[i+1], null, null);
-			} else if (args[i].equals("-kbport") && args.length >= i+2) {
-				setKBEndpoint(null, args[i+1], null);
-			} else if (args[i].equals("-kbpath") && args.length >= i+2) {
-				setKBEndpoint(null, null, args[i+1]);
+			} else if (args[i].equals("-dbip") && args.length >= i+2) {
+				setDBEndpoint(args[i+1], null, null);
+			} else if (args[i].equals("-dbport") && args.length >= i+2) {
+				setDBEndpoint(null, args[i+1], null);
+			} else if (args[i].equals("-dbpath") && args.length >= i+2) {
+				setDBEndpoint(null, null, args[i+1]);
 			} else if (args[i].equals("-listenerport") && args.length >= i+2) {
 				setPort(args[i+1]);
 			} else {
@@ -185,7 +185,7 @@ public abstract class Configuration {
 		}
 	}
 	
-	private static void setKBEndpoint(String kbUrl, String kbPort, String dataset) {
+	private static void setDBEndpoint(String kbUrl, String kbPort, String dataset) {
 		if (kbUrl != null) {
 			int i = FUSEKI_HOST.indexOf(":", "http://".length());
 			FUSEKI_HOST = "http://" + kbUrl + FUSEKI_HOST.substring(i);

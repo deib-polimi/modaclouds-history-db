@@ -5,7 +5,7 @@
 ## What to configure
 
 * Queue URL: the endpoint to the queue (tipically a RabbitMQ queue)
-* KB URL: the endpoint to the Knowledge Base (tipically a Fuseki datastore)
+* DB URL: the endpoint to the database (tipically a Fuseki datastore)
 * Listener port: the port on which the listener will wait for messages.
 
 ## How to configure
@@ -19,7 +19,7 @@ The monitoring manager can be configured by means of different options (latters 
 ### Default Configuration
 
 * Queue URL: `http://localhost:5672`
-* KB URL: `http://localhost:3030/ds`
+* DB URL: `http://localhost:3030/ds`
 * Listener port: `31337`.
 
 ### Environment Variables
@@ -27,16 +27,16 @@ The monitoring manager can be configured by means of different options (latters 
 ```
 MODACLOUDS_HDB_QUEUE_ENDPOINT_IP
 MODACLOUDS_HDB_QUEUE_ENDPOINT_PORT
-MODACLOUDS_HDB_KB_ENDPOINT_IP
-MODACLOUDS_HDB_KB_ENDPOINT_PORT
-MODACLOUDS_HDB_KB_DATASET_PATH
+MODACLOUDS_HDB_DB_ENDPOINT_IP
+MODACLOUDS_HDB_DB_ENDPOINT_PORT
+MODACLOUDS_HDB_DB_DATASET_PATH
 MODACLOUDS_HDB_LISTENER_PORT
 ```
 
 where:
 
 * Queue URL: `http://${MODACLOUDS_HDB_QUEUE_ENDPOINT_IP}:${MODACLOUDS_HDB_QUEUE_ENDPOINT_PORT}`
-* KB URL: `http://${MODACLOUDS_HDB_KB_ENDPOINT_IP}:${MODACLOUDS_HDB_KB_ENDPOINT_PORT}${MODACLOUDS_HDB_KB_DATASET_PATH}`
+* DB URL: `http://${MODACLOUDS_HDB_DB_ENDPOINT_IP}:${MODACLOUDS_HDB_DB_ENDPOINT_PORT}${MODACLOUDS_HDB_DB_DATASET_PATH}`
 * Listener port: `${MODACLOUDS_HDB_LISTENER_PORT}`.
 
 ### System Properties
@@ -56,14 +56,14 @@ Usage: historydb [options]
     -queueport
        Queue endpoint port
        Default: 5672
-    -kbip
-       KB endpoint IP address
+    -dbip
+       DB endpoint IP address
        Default: 127.0.0.1
-    -kbpath
-       KB URL path
+    -dbpath
+       DB URL path
        Default: /ds
-    -kbport
-       KB endpoint port
+    -dbport
+       DB endpoint port
        Default: 3030
     -listenerport
        Listener endpoint port

@@ -30,14 +30,14 @@ public class Main {
 "    -queueport\n" +
 "       Queue endpoint port\n" +
 "       Default: 5672\n" +
-"    -kbip\n" +
-"       KB endpoint IP address\n" +
+"    -dbip\n" +
+"       DB endpoint IP address\n" +
 "       Default: 127.0.0.1\n" +
-"    -kbpath\n" +
-"       KB URL path\n" +
+"    -dbpath\n" +
+"       DB URL path\n" +
 "       Default: /ds\n" +
-"    -kbport\n" +
-"       KB endpoint port\n" +
+"    -dbport\n" +
+"       DB endpoint port\n" +
 "       Default: 3030\n" +
 "    -listenerport\n" +
 "       Listener endpoint port\n" +
