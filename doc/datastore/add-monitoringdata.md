@@ -56,3 +56,31 @@ SELECT * {
     FILTER (?o >= 1425574600000 && ?o <= 1425574900000 && regex(str(?s), "monitoring"))
 }
 ```
+
+* find all the metrics registered:
+
+```sparql
+SELECT DISTINCT ?o
+WHERE {
+    GRAPH ?g { ?s <http://www.modaclouds.eu/rdfs/1.0/monitoringdata#metric> ?o }
+}
+```
+
+* find all the graphs and subjects for a specific metric (e.g. `FrontendCPUUtilization`):
+
+```sparql
+SELECT ?g ?s
+WHERE {
+    GRAPH ?g { ?s <http://www.modaclouds.eu/rdfs/1.0/monitoringdata#metric> "FrontendCPUUtilization" }
+}
+```
+
+* find all data for a specific metric (e.g. `FrontendCPUUtilization`):
+
+```sparql
+SELECT ?g ?s ?p ?o
+WHERE {
+    GRAPH ?g { ?s ?p ?o }
+    GRAPH ?g { ?s <http://www.modaclouds.eu/rdfs/1.0/monitoringdata#metric> "FrontendCPUUtilization" }
+}
+```

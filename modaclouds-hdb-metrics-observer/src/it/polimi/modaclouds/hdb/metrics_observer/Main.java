@@ -26,10 +26,10 @@ public class Main {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	
 	public static void main(String[] args) {
-		perform(null, true);
+		perform(new String[] {"-fakemessages", "30", "-waitfakemessages", "1000"});
 	}
 	
-	public static void perform(String[] args, boolean useFakeData) {
+	public static void perform(String[] args) {
 		logger.info("HDB Metrics Observer starting...");
 		
 		Configuration.loadFromEnrivonmentVariables();
@@ -42,8 +42,26 @@ public class Main {
 		logger.debug("MetricsObserver started!");
 		
 		logger.info("HDB Metrics Observer started!");
+		
+		int fakeMessages = -1;
+		int waitFakeMessages = -1;
+		
+		if (args != null)
+			for (int i = 0; i < args.length; i+=2) {
+				if (args[i].equals("-fakemessages") && args.length >= i+2) {
+					try {
+						fakeMessages = Integer.parseInt(args[i+1]);
+					} catch (Exception e) { }
+				} else if (args[i].equals("-waitfakemessages") && args.length >= i+2) {
+					try {
+						waitFakeMessages = Integer.parseInt(args[i+1]);
+					} catch (Exception e) { }
+				} else {
+					i--;
+				}
+			}
         
-		if (useFakeData) {
+		if (fakeMessages > 0) {
 	        try {
 				Thread.sleep(2);
 			} catch (InterruptedException e) {
@@ -51,12 +69,15 @@ public class Main {
 			}
 	        
 	        logger.debug("Starting the producer...");
-	        Producer.test(30);
+	        if (waitFakeMessages >= 0)
+	        	Producer.test(fakeMessages, waitFakeMessages);
+	        else 
+	        	Producer.test(fakeMessages, 1000);
 		}
         
 	}
 	
 	public static void perform() {
-		perform(null, true);
+		perform(null);
 	}
 }

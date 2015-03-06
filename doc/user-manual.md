@@ -68,6 +68,15 @@ Usage: historydb [options]
     -listenerport
        Listener endpoint port
        Default: 31337
+    -fakemessages
+       Test the tool sending a number of fake messages at the beginning
+       Default: 0
+    -waitfakemessages
+       The ms to wait between each fake message
+       Default: 1000 (1 second)
     -help | -h | --help
        Shows this message.
 ```
+
+There are two new parameters here that are useful when testing the tool: `-fakemessages` and `-waitfakemessages`. If you call the tool for having 30 fake messages,
+30 random messages will be sent when the tool starts, and this is useful for testing the environment.

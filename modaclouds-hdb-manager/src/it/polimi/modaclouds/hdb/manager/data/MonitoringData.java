@@ -109,16 +109,18 @@ public class MonitoringData {
 		    Property  predicate = stmt.getPredicate();
 		    RDFNode   object    = stmt.getObject();
 		    
-		    r.model.add(subject, predicate, object);
-		    
 		    String name = predicate.toString();
 		    int i = 0;
 		    if (( i = name.indexOf('#') ) > 0)
 		    	name = name.substring(i + 1);
-		    else if (( i = name.lastIndexOf('/') ) > 0)
+		    else if (( i = name.lastIndexOf('/') ) > 0) {
 		    	name = name.substring(i + 1);
+		    	predicate = r.model.createProperty("http://www.modaclouds.eu/rdfs/1.0/monitoringdata#" + name);
+		    }
 		    else
 		    	continue;
+		    
+		    r.model.add(subject, predicate, object);
 		    
 		    
 		    String value = "";

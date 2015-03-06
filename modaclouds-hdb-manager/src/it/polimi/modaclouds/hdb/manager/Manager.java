@@ -67,6 +67,12 @@ public class Manager extends Thread {
 			logger.debug("Message received:\n{}", msg);
 			parseMessage(msg);
 			
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				logger.error("Error while waiting between messages.", e);
+			}
+			
 			y = System.currentTimeMillis();
 		}
 	}

@@ -17,6 +17,10 @@
 package it.polimi.modaclouds.hdb.manager;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +51,67 @@ public class Queue {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Queue.class);
 	
-	public Queue(String queueHost, String queueName) throws IOException {
+	private static ExecutorService execService = null;
+	
+	public Queue(String queueHost, String queueName) {
 		this.queueName = queueName;
 		this.queueHost = queueHost;
+		
+		if (execService == null)
+			execService = Executors.newCachedThreadPool();
+	}
+	
+	private class AddExecutor extends Thread {
+		private String message;
+		private Queue queue;
+		
+		public AddExecutor(String message) {
+			this.message = message;
+			queue = new Queue(queueHost, queueName);
+		}
+		
+		public void run() {
+		    try {
+		    	queue.connect();
+		    	queue.internalAddMessage(message);
+		    } catch (Exception e) {
+		    	logger.error("Error while dealing with the queue.", e);
+		    } finally {
+		    	try {
+		    		queue.close();
+		    	} catch (Exception e) {
+		    		logger.error("Error while dealing with the queue.", e);
+		    	}
+		    }
+		}
+	}
+	
+	private class GetExecutor implements Callable<String> {
+		private Queue queue;
+		
+		public GetExecutor() {
+			queue = new Queue(queueHost, queueName);
+		}
+
+		@Override
+		public String call() {
+			String ret = null;
+			
+			try {
+		    	queue.connect();
+		    	ret = queue.internalGetMessage();
+		    } catch (Exception e) {
+		    	logger.error("Error while dealing with the queue.", e);
+		    } finally {
+		    	try {
+		    		queue.close();
+		    	} catch (Exception e) {
+		    		logger.error("Error while dealing with the queue.", e);
+		    	}
+		    }
+			
+			return ret;
+		}
 	}
 	
 	private boolean connected = false;
@@ -67,34 +129,29 @@ public class Queue {
 	    connected = true;
 	}
 	
-	public void addMessage(String message) throws IOException {
-		connect();
-		
+	private void internalAddMessage(String message) throws IOException {
 		channel.queueDeclare(queueName, true, false, false, null);
 		
 		channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
 		logger.debug("Message added:\n{}", message);
-		
-		close();
 	}
 	
-	public String getMessage() throws IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
-		return getMessage(-1);
+	public void addMessage(String message) {
+		execService.submit(new AddExecutor(message));
 	}
 	
-	public String getMessage(int timeout) throws IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
-		connect();
-		
+	public String getMessage() throws IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException, ExecutionException {
+		return (String) execService.submit(new GetExecutor()).get();
+	}
+	
+	private String internalGetMessage() throws IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
 		channel.queueDeclare(queueName, true, false, false, null);
 		
 		QueueingConsumer consumer = new QueueingConsumer(channel);
 	    channel.basicConsume(queueName, /*true*/false, consumer);
 
 	    QueueingConsumer.Delivery delivery = null;
-	    if (timeout > 0)
-	    	delivery = consumer.nextDelivery(timeout);
-	    else
-	    	delivery = consumer.nextDelivery();
+	    delivery = consumer.nextDelivery();
 	    
 	    if (delivery == null)
 	    	return null;
@@ -103,8 +160,6 @@ public class Queue {
 	    
 	    String message = new String(delivery.getBody());
 	    logger.debug("Message received:\n{}", message);
-	    
-	    close();
 	    
 	    return message;
 	}
