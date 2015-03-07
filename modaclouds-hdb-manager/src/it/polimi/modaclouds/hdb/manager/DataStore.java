@@ -27,6 +27,8 @@ import it.polimi.modaclouds.qos_models.monitoring_ontology.MOVocabulary;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,8 @@ public class DataStore {
 	
 	private static DatasetAccessor datasetAccessor = null;
 	
+	private static ExecutorService execService = null;
+	
 	public DataStore(String host) {
 		this.host = host;
 		
@@ -60,9 +64,11 @@ public class DataStore {
 			knowledgeBaseModels.uploadOntology(MO.model, "models");
 		}
 		
-		if (datasetAccessor == null) {
+		if (datasetAccessor == null)
 			datasetAccessor = DatasetAccessorFactory.createHTTP(host + "/data");
-		}
+		
+		if (execService == null)
+			execService = Executors.newCachedThreadPool();
 		
 		logger.debug("Connection created to the fuseki store at {}.", host);
 	}
@@ -72,7 +78,7 @@ public class DataStore {
 	}
 	
 	private boolean add(String graphUri, com.hp.hpl.jena.rdf.model.Model model) {
-		new AddExecutor(graphUri, model).start();
+		execService.submit(new AddExecutor(graphUri, model));
 		return true;
 	}
 	
@@ -258,6 +264,12 @@ public class DataStore {
 			else
 				datasetAccessor.add(graphUri, model);
 			logger.debug("Model added to the datastore.");
+			
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				logger.error("Error while waiting.", e);
+			}
 		}
 
 	}
