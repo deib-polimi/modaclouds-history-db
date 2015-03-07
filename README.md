@@ -13,6 +13,10 @@ Useful links to the documentation:
 * [Install Guide](https://github.com/deib-polimi/modaclouds-history-db/blob/master/doc/install.md)
 
 ## ChangeLog
+[v0.1.3](https://github.com/deib-polimi/modaclouds-history-db/blob/master/bin/historydb-0.1.3.zip):
+
+* Now a executor service is used also while adding messages to the datastore, fixing all the problems!
+
 [v0.1.2](https://github.com/deib-polimi/modaclouds-history-db/blob/master/bin/historydb-0.1.2.zip):
 
 * Bug fixes.
