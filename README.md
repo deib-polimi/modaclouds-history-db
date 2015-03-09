@@ -13,9 +13,15 @@ Useful links to the documentation:
 * [Install Guide](https://github.com/deib-polimi/modaclouds-history-db/blob/master/doc/install.md)
 
 ## ChangeLog
+[v0.1.4](https://github.com/deib-polimi/modaclouds-history-db/blob/master/bin/historydb-0.1.4.zip):
+
+* A subscription is used instead of polling the queue: better performances should be expected.
+* Now a fake message is sent at the beginning for each queue handled, so that the code could work with older versions of RabbitMQ.
+* Better handling of failures: the fuseki and rabbitmq hosts are checked at the beginning and signaled if they're wrongly configured.
+
 [v0.1.3](https://github.com/deib-polimi/modaclouds-history-db/blob/master/bin/historydb-0.1.3.zip):
 
-* Now a executor service is used also while adding messages to the datastore, fixing all the problems!
+* Now an executor service is used also while adding messages to the datastore, fixing all the problems!
 
 [v0.1.2](https://github.com/deib-polimi/modaclouds-history-db/blob/master/bin/historydb-0.1.2.zip):
 

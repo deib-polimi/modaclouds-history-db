@@ -16,6 +16,8 @@
  */
 package it.polimi.modaclouds.hdb.manager;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,7 @@ public class Manager extends Thread implements MessageParser {
 		this.queueName = queueName;
 		try {
 			queue = new Queue(queueName);
+			queue.init();
 			dataStore = new DataStore();
 			logger.debug("Manager initialized.");
 		} catch (Exception e) {
@@ -51,42 +54,45 @@ public class Manager extends Thread implements MessageParser {
 	public void run() {
 		logger.debug("Manager started.");
 		
-//		try {
-//			queue.addSubscription(this);
-//		} catch (IOException e1) {
-//			logger.error("Error while subscribing to the queue!", e1);
-//		}
-		
-		
-		long x = System.currentTimeMillis();
-		long y = x;
-		int runningTime = RUNNING_TIME;
-		if (runningTime < 0)
-			runningTime = Integer.MAX_VALUE;
-		while (y - x < runningTime) {
-			String msg = null;
-			try {
-				msg = queue.getMessage();
-			} catch (Exception e) {
-				logger.error("Error while getting the message from the queue!", e);
-			}
-			if (msg == null)
-				continue;
-			logger.debug("Message received:\n{}", msg);
-			parseMessage(msg);
-			
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				logger.error("Error while waiting between messages.", e);
-			}
-			
-			y = System.currentTimeMillis();
+		try {
+			queue.addSubscription(this);
+		} catch (IOException e1) {
+			logger.error("Error while subscribing to the queue!", e1);
 		}
+		
+		
+//		long x = System.currentTimeMillis();
+//		long y = x;
+//		int runningTime = RUNNING_TIME;
+//		if (runningTime < 0)
+//			runningTime = Integer.MAX_VALUE;
+//		while (y - x < runningTime) {
+//			String msg = null;
+//			try {
+//				msg = queue.getMessage();
+//			} catch (Exception e) {
+//				logger.error("Error while getting the message from the queue!", e);
+//			}
+//			if (msg == null)
+//				continue;
+//			logger.debug("Message received:\n{}", msg);
+//			parseMessage(msg);
+//			
+//			try {
+//				Thread.sleep(500);
+//			} catch (InterruptedException e) {
+//				logger.error("Error while waiting between messages.", e);
+//			}
+//			
+//			y = System.currentTimeMillis();
+//		}
 	}
 	
 	public void parseMessage(String msg) {
 		logger.debug("Message to be parsed:\n{}", msg);
+		
+		if (msg.equals(Queue.INIT_MSG))
+			return;
 		
 		if (queueName.equals(Configuration.QUEUE_RESULTS))
 			dataStore.addMonitoringData(msg);

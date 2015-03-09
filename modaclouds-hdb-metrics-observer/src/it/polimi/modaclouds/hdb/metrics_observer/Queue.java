@@ -29,7 +29,6 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.MessageProperties;
@@ -63,6 +62,12 @@ public class Queue {
 
 		if (execService == null)
 			execService = Executors.newCachedThreadPool();
+	}
+	
+	public static final String INIT_MSG = "init";
+	
+	public void init() {
+		execService.submit(new AddExecutor(INIT_MSG));
 	}
 
 	public void addSubscription(MessageParser pars) throws IOException {
@@ -178,7 +183,12 @@ public class Queue {
 			return;
 
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost(queueHost);
+		factory.setHost(Configuration.getHost(queueHost));
+		
+		int port = Configuration.getPort(queueHost);
+		if (port > 0)
+			factory.setPort(port);
+		
 		connection = factory.newConnection();
 		channel = connection.createChannel();
 		logger.debug("Connected to the queue {} on {}.", queueName, queueHost);
@@ -199,13 +209,13 @@ public class Queue {
 	}
 
 	public String getMessage() throws IOException, ShutdownSignalException,
-			ConsumerCancelledException, InterruptedException,
+			InterruptedException,
 			ExecutionException {
 		return (String) execService.submit(new GetExecutor()).get();
 	}
 
 	private String internalGetMessage() throws IOException,
-			ShutdownSignalException, ConsumerCancelledException,
+			ShutdownSignalException,
 			InterruptedException {
 		channel.queueDeclare(queueName, true, false, false, null);
 

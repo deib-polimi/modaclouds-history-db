@@ -19,6 +19,9 @@ package it.polimi.modaclouds.hdb.manager;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -40,7 +43,7 @@ public abstract class Configuration {
 	public static final String DEFAULT_PATH_MODEL = "/model/resources";
 	
 	public static final String DEFAULT_BASEPATH = "http://localhost";
-	public static String QUEUE_HOST = "localhost";
+	public static String QUEUE_HOST = "localhost:5672";
 	public static final String QUEUE_RESULTS = "hdb_results";
 	public static final String QUEUE_MODELS = "hdb_models";
 	public static final String QUEUE_DELTA_MODELS = "hdb_delta_models";
@@ -208,4 +211,63 @@ public abstract class Configuration {
 			} catch (Exception e) { }
 	}
 	
+	public static int getPort(String url) {
+		url = url.replaceAll("http://", "");
+		url = url.replaceAll("https://", "");
+		
+		int i = url.indexOf('/');
+		if (i > -1)
+			url = url.substring(0, i);
+		
+		i = url.indexOf(':');
+		if (i > -1)
+			url = url.substring(i+1);
+		
+		try {
+			return Integer.parseInt(url);
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+	
+	public static String getHost(String url) {
+		url = url.replaceAll("http://", "");
+		url = url.replaceAll("https://", "");
+		
+		int i = url.indexOf('/');
+		if (i > -1)
+			url = url.substring(0, i);
+		
+		i = url.indexOf(':');
+		if (i > -1)
+			url = url.substring(0, i);
+		
+		return url;
+	}
+	
+	public static List<String> checkConfiguration() {
+		List<String> res = new ArrayList<String>();
+		
+		try {
+			String host = getHost(FUSEKI_HOST);
+			int port = getPort(FUSEKI_HOST);
+			
+			Socket s = new Socket(host, port);
+			s.close();
+		} catch (Exception e) {
+			res.add("Error while connecting to the Fuseki datastore. Please check your configuration (" + FUSEKI_HOST + ").");
+		}
+		
+		try {
+			String host = getHost(QUEUE_HOST);
+			int port = getPort(QUEUE_HOST);
+			
+			Socket s = new Socket(host, port);
+			s.close();
+		} catch (Exception e) {
+			res.add("Error while connecting to the queue. Please check your configuration (" + QUEUE_HOST + ").");
+		}
+		
+		return res;
+	}
 }

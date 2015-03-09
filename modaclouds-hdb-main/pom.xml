@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.polimi.modaclouds.hdb</groupId>
   <artifactId>hdb-main</artifactId>
-  <version>0.1.3</version>
+  <version>0.1.4</version>
   
   <licenses>
         <license>
@@ -207,12 +207,12 @@
   	<dependency>
   		<groupId>it.polimi.modaclouds.hdb</groupId>
   		<artifactId>hdb-manager</artifactId>
-  		<version>0.1.3</version>
+  		<version>0.1.4</version>
   	</dependency>
   	<dependency>
         <groupId>it.polimi.modaclouds.hdb</groupId>
         <artifactId>hdb-metrics-observer</artifactId>
-        <version>0.1.3</version>
+        <version>0.1.4</version>
     </dependency>
     <dependency>
         <groupId>org.slf4j</groupId>

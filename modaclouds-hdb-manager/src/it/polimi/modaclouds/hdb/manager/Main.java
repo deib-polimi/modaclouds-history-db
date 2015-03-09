@@ -16,6 +16,8 @@
  */
 package it.polimi.modaclouds.hdb.manager;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,16 @@ public class Main {
 		Configuration.loadFromEnrivonmentVariables();
 		Configuration.loadFromSystemProperties();
 		Configuration.loadFromArguments(args);
+		
+		List<String> errs = Configuration.checkConfiguration();
+		if (errs.size() > 0) {
+			logger.error("Configuration errors identified:");
+			for (String s : errs)
+				logger.error("- " + s);
+			logger.error("Exiting...");
+			
+			System.exit(-1);
+		}
 		
 		DataStore.reset();
 		

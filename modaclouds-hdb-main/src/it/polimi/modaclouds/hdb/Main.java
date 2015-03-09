@@ -9,6 +9,8 @@ public class Main {
 
 	public static void main(String[] args) {
 		
+//		args = new String[] {"-fakemessages", "10", "-waitfakemessages", "1000"}; //, "-h", "-queueip", "109.231.121.52"}; // , "-queueport", "55672"});
+		
 		System.out.println("\nHistory-DB\n");
 		
 		if (args.length > 0) {
@@ -49,10 +51,10 @@ public class Main {
 "       The ms to wait between each fake message\n" +
 "       Default: 1000 (1 second)\n" +
 "    -help | -h | --help\n" +
-"       Shows this message."
+"       Shows this message.\n"
 						);
 				
-				return;
+				System.exit(0);
 			}
 		}
 		

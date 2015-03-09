@@ -18,6 +18,8 @@ package it.polimi.modaclouds.hdb.metrics_observer;
 
 import it.polimi.modaclouds.hdb.metrics_observer.rest.Producer;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,7 @@ public class Main {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	
 	public static void main(String[] args) {
-		perform(new String[] {"-fakemessages", "300", "-waitfakemessages", "10"});
+		perform(new String[] {"-fakemessages", "30", "-waitfakemessages", "1000"});
 	}
 	
 	public static void perform(String[] args) {
@@ -35,6 +37,16 @@ public class Main {
 		Configuration.loadFromEnrivonmentVariables();
 		Configuration.loadFromSystemProperties();
 		Configuration.loadFromArguments(args);
+		
+		List<String> errs = Configuration.checkConfiguration();
+		if (errs.size() > 0) {
+			logger.error("Configuration errors identified:");
+			for (String s : errs)
+				logger.error("- " + s);
+			logger.error("Exiting...");
+			
+			System.exit(-1);
+		}
 		
 		MetricsObserver.RUNNING_TIME = -1;
 		MetricsObserver mo = new MetricsObserver();

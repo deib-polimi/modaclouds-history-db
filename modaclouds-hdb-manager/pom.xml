@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.polimi.modaclouds.hdb</groupId>
   <artifactId>hdb-manager</artifactId>
-  <version>0.1.3</version>
+  <version>0.1.4</version>
   
   <licenses>
         <license>
@@ -194,7 +194,7 @@
     <dependency>
         <groupId>com.rabbitmq</groupId>
         <artifactId>amqp-client</artifactId>
-        <version>3.4.3</version>
+        <version>3.4.4</version>
     </dependency>
     <dependency>
         <groupId>it.polimi.modaclouds.qos-models</groupId>
