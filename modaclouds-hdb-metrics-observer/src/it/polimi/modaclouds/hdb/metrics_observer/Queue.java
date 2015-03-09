@@ -30,6 +30,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.ConsumerCancelledException;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.MessageProperties;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.ShutdownSignalException;
@@ -45,50 +47,105 @@ public class Queue {
 	
 	private String queueName;
 	private String queueHost;
-	
+
 	private Channel channel;
 	private Connection connection;
 	
+	private MessageParser parser;
+
 	private static final Logger logger = LoggerFactory.getLogger(Queue.class);
-	
+
 	private static ExecutorService execService = null;
-	
+
 	public Queue(String queueHost, String queueName) {
 		this.queueName = queueName;
 		this.queueHost = queueHost;
-		
+
 		if (execService == null)
 			execService = Executors.newCachedThreadPool();
 	}
+
+	public void addSubscription(MessageParser pars) throws IOException {
+		execService.submit(new AddSubscriptionExecutor(pars));
+	}
+		
+	private void internalAddSubscription(MessageParser pars) throws IOException {
+		boolean autoAck = false;
+		if (this.parser != null) {
+			internalRemoveSubscription();
+		}
+		this.parser = pars;
+		channel.basicConsume(queueName, autoAck, queueName + "@" + queueHost,
+				new DefaultConsumer(channel) {
+					@Override
+					public void handleDelivery(String consumerTag,
+							Envelope envelope, AMQP.BasicProperties properties,
+							byte[] body) throws IOException {
+						
+						long deliveryTag = envelope.getDeliveryTag();
+
+						String message = new String(body);
+						logger.debug("Message received:\n{}", message);
+						
+						parser.parseMessage(message);
+
+						channel.basicAck(deliveryTag, false);
+					}
+				});
+	}
 	
+	private void internalRemoveSubscription() throws IOException {
+		this.parser = null;
+		channel.basicCancel(queueName + "@" + queueHost);
+	}
+
 	private class AddExecutor extends Thread {
 		private String message;
 		private Queue queue;
-		
+
 		public AddExecutor(String message) {
 			this.message = message;
 			queue = new Queue(queueHost, queueName);
 		}
-		
+
 		public void run() {
-		    try {
-		    	queue.connect();
-		    	queue.internalAddMessage(message);
-		    } catch (Exception e) {
-		    	logger.error("Error while dealing with the queue.", e);
-		    } finally {
-		    	try {
-		    		queue.close();
-		    	} catch (Exception e) {
-		    		logger.error("Error while dealing with the queue.", e);
-		    	}
-		    }
+			try {
+				queue.connect();
+				queue.internalAddMessage(message);
+			} catch (Exception e) {
+				logger.error("Error while dealing with the queue.", e);
+			} finally {
+				try {
+					queue.close();
+				} catch (Exception e) {
+					logger.error("Error while dealing with the queue.", e);
+				}
+			}
 		}
 	}
 	
+	private class AddSubscriptionExecutor extends Thread {
+		private MessageParser pars;
+		private Queue queue;
+
+		public AddSubscriptionExecutor(MessageParser pars) {
+			queue = new Queue(queueHost, queueName);
+			this.pars = pars;
+		}
+
+		public void run() {
+			try {
+				queue.connect();
+				queue.internalAddSubscription(pars);
+			} catch (Exception e) {
+				logger.error("Error while dealing with the queue.", e);
+			}
+		}
+	}
+
 	private class GetExecutor implements Callable<String> {
 		private Queue queue;
-		
+
 		public GetExecutor() {
 			queue = new Queue(queueHost, queueName);
 		}
@@ -96,104 +153,111 @@ public class Queue {
 		@Override
 		public String call() {
 			String ret = null;
-			
+
 			try {
-		    	queue.connect();
-		    	ret = queue.internalGetMessage();
-		    } catch (Exception e) {
-		    	logger.error("Error while dealing with the queue.", e);
-		    } finally {
-		    	try {
-		    		queue.close();
-		    	} catch (Exception e) {
-		    		logger.error("Error while dealing with the queue.", e);
-		    	}
-		    }
-			
+				queue.connect();
+				ret = queue.internalGetMessage();
+			} catch (Exception e) {
+				logger.error("Error while dealing with the queue.", e);
+			} finally {
+				try {
+					queue.close();
+				} catch (Exception e) {
+					logger.error("Error while dealing with the queue.", e);
+				}
+			}
+
 			return ret;
 		}
 	}
-	
+
 	private boolean connected = false;
-	
+
 	private void connect() throws IOException {
 		if (connected)
 			return;
-		
+
 		ConnectionFactory factory = new ConnectionFactory();
-	    factory.setHost(queueHost);
-	    connection = factory.newConnection();
-	    channel = connection.createChannel();
-	    logger.debug("Connected to the queue {} on {}.", queueName, queueHost);
-	    
-	    connected = true;
+		factory.setHost(queueHost);
+		connection = factory.newConnection();
+		channel = connection.createChannel();
+		logger.debug("Connected to the queue {} on {}.", queueName, queueHost);
+
+		connected = true;
 	}
-	
+
 	private void internalAddMessage(String message) throws IOException {
 		channel.queueDeclare(queueName, true, false, false, null);
-		
-		channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
+
+		channel.basicPublish("", queueName,
+				MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
 		logger.debug("Message added:\n{}", message);
 	}
-	
+
 	public void addMessage(String message) {
 		execService.submit(new AddExecutor(message));
 	}
-	
-	public String getMessage() throws IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException, ExecutionException {
+
+	public String getMessage() throws IOException, ShutdownSignalException,
+			ConsumerCancelledException, InterruptedException,
+			ExecutionException {
 		return (String) execService.submit(new GetExecutor()).get();
 	}
-	
-	private String internalGetMessage() throws IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
-		channel.queueDeclare(queueName, true, false, false, null);
-		
-		QueueingConsumer consumer = new QueueingConsumer(channel);
-	    channel.basicConsume(queueName, /*true*/false, consumer);
 
-	    QueueingConsumer.Delivery delivery = null;
-	    delivery = consumer.nextDelivery();
-	    
-	    if (delivery == null)
-	    	return null;
-	    
-	    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-	    
-	    String message = new String(delivery.getBody());
-	    logger.debug("Message received:\n{}", message);
-	    
-	    return message;
+	private String internalGetMessage() throws IOException,
+			ShutdownSignalException, ConsumerCancelledException,
+			InterruptedException {
+		channel.queueDeclare(queueName, true, false, false, null);
+
+		QueueingConsumer consumer = new QueueingConsumer(channel);
+		channel.basicConsume(queueName, /* true */false, consumer);
+
+		QueueingConsumer.Delivery delivery = null;
+		delivery = consumer.nextDelivery();
+
+		if (delivery == null)
+			return null;
+
+		channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+
+		String message = new String(delivery.getBody());
+		logger.debug("Message received:\n{}", message);
+
+		return message;
 	}
-	
+
 	public int count() {
 		try {
 			connect();
-			
-			AMQP.Queue.DeclareOk dok = channel.queueDeclare(queueName, true, false, false, null);
+
+			AMQP.Queue.DeclareOk dok = channel.queueDeclare(queueName, true,
+					false, false, null);
 			int count = dok.getMessageCount();
 			logger.debug("Messages in the queue: {}.", count);
-			
+
 			close();
-			
+
 			return count;
 		} catch (Exception e) {
-			logger.error("Error while checking the number of messages in the queue!", e);
+			logger.error(
+					"Error while checking the number of messages in the queue!",
+					e);
 			return -1;
 		}
 	}
-	
+
 	private void close() throws IOException {
 		if (!connected)
 			return;
-		
+
 		channel.close();
 		connection.close();
 		logger.debug("Connection to the queue closed.");
-		
+
 		connected = false;
 	}
-	
+
 	public Queue(String queueName) throws IOException {
 		this(Configuration.QUEUE_HOST, queueName);
 	}
-	
 }

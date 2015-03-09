@@ -26,7 +26,7 @@ public class Main {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	
 	public static void main(String[] args) {
-		perform(new String[] {"-fakemessages", "30", "-waitfakemessages", "1000"});
+		perform(new String[] {"-fakemessages", "300", "-waitfakemessages", "10"});
 	}
 	
 	public static void perform(String[] args) {

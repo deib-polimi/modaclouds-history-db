@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * @author Riccardo B. Desantis
  *
  */
-public class Manager extends Thread {
+public class Manager extends Thread implements MessageParser {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Manager.class);
 	
@@ -50,6 +50,14 @@ public class Manager extends Thread {
 	@Override
 	public void run() {
 		logger.debug("Manager started.");
+		
+//		try {
+//			queue.addSubscription(this);
+//		} catch (IOException e1) {
+//			logger.error("Error while subscribing to the queue!", e1);
+//		}
+		
+		
 		long x = System.currentTimeMillis();
 		long y = x;
 		int runningTime = RUNNING_TIME;
