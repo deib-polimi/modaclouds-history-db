@@ -63,7 +63,7 @@ public class Main {
 	public static final String APP_TITLE = "\nHistory-DB Metrics Observer\n";
 	
 	public static void main(String[] args) {
-//		args = new String[] {"-fakemessages", "30", "-waitfakemessages", "1000"};
+		args = new String[] {"-fakemessages", "30", "-waitfakemessages", "1000"};
 		
 		Main m = new Main();
 		JCommander jc = new JCommander(m, args);

@@ -46,7 +46,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-//		args = new String[] {"-fakemessages", "10", "-waitfakemessages", "1000" }; //, "-h", "-queueip", "109.231.121.52"}; // , "-queueport", "55672"});
+		args = new String[] {"-fakemessages", "10", "-waitfakemessages", "1000" }; //, "-h", "-queueip", "109.231.121.52"}; // , "-queueport", "55672"});
 		
 		System.out.println(APP_TITLE);
 		
