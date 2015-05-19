@@ -14,7 +14,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package it.polimi.modaclouds.hdb.manager;
+package it.polimi.tower4clouds.observers.hdb.manager;
 
 import java.io.IOException;
 

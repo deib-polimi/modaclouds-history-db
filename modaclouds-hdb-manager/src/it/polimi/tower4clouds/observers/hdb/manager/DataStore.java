@@ -14,16 +14,16 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package it.polimi.modaclouds.hdb.manager;
+package it.polimi.tower4clouds.observers.hdb.manager;
 
-import it.polimi.modaclouds.hdb.manager.data.Model;
-import it.polimi.modaclouds.hdb.manager.data.MonitoringData;
 import it.polimi.modaclouds.monitoring.kb.api.DeserializationException;
 import it.polimi.modaclouds.monitoring.kb.api.FusekiKBAPI;
 import it.polimi.modaclouds.monitoring.kb.api.SerializationException;
 import it.polimi.modaclouds.monitoring.kb.api.Util;
 import it.polimi.modaclouds.qos_models.monitoring_ontology.MO;
 import it.polimi.modaclouds.qos_models.monitoring_ontology.MOVocabulary;
+import it.polimi.tower4clouds.observers.hdb.manager.data.Model;
+import it.polimi.tower4clouds.observers.hdb.manager.data.MonitoringData;
 
 import java.util.Calendar;
 import java.util.Date;

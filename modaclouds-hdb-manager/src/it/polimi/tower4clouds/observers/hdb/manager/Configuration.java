@@ -14,7 +14,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package it.polimi.modaclouds.hdb.metrics_observer;
+package it.polimi.tower4clouds.observers.hdb.manager;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public abstract class Configuration {
 	public static int DEFAULT_PORT = 31337;
 	
 	public static final String DEFAULT_PATH = "/monitoringdata";
-	public static final String DEFAULT_PATH_MODEL = "/model/resources";
+	public static final String DEFAULT_PATH_MODEL = "/resources";
 	
 	public static final String DEFAULT_BASEPATH = "http://localhost";
 	public static String QUEUE_HOST = "localhost:5672";
@@ -146,29 +147,22 @@ public abstract class Configuration {
 		setPort(port);
 	}
 	
-	public static void loadFromArguments(String[] args) {
-		if (args == null)
+	public static void loadFromArguments(Map<String, String> paramsMap) {
+		if (paramsMap == null)
 			return;
 		
-		for (int i = 0; i < args.length; i+=2) {
-			if (args[i].equals("-queueip") && args.length >= i+2) {
-				setQueueEndpoint(args[i+1], null);
-			} else if (args[i].equals("-queueport") && args.length >= i+2) {
-				setQueueEndpoint(null, args[i+1]);
-			} else if (args[i].equals("-queueport") && args.length >= i+2) {
-				setQueueEndpoint(null, args[i+1]);
-			} else if (args[i].equals("-dbip") && args.length >= i+2) {
-				setDBEndpoint(args[i+1], null, null);
-			} else if (args[i].equals("-dbport") && args.length >= i+2) {
-				setDBEndpoint(null, args[i+1], null);
-			} else if (args[i].equals("-dbpath") && args.length >= i+2) {
-				setDBEndpoint(null, null, args[i+1]);
-			} else if (args[i].equals("-listenerport") && args.length >= i+2) {
-				setPort(args[i+1]);
-			} else {
-				i--;
-			}
-		}
+		if (paramsMap.get("queueip") != null)
+			setQueueEndpoint(paramsMap.get("queueip"), null);
+		if (paramsMap.get("queueport") != null)
+			setQueueEndpoint(null, paramsMap.get("queueport"));
+		if (paramsMap.get("dbip") != null)
+			setDBEndpoint(paramsMap.get("dbip"), null, null);
+		if (paramsMap.get("dbport") != null)
+			setDBEndpoint(null, paramsMap.get("dbport"), null);
+		if (paramsMap.get("dbpath") != null)
+			setDBEndpoint(null, null, paramsMap.get("dbpath"));
+		if (paramsMap.get("listenerport") != null)
+			setPort(paramsMap.get("listenerport"));
 	}
 	
 	private static void setQueueEndpoint(String queueIp, String queuePort) {

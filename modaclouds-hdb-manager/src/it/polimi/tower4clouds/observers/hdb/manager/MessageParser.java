@@ -14,7 +14,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package it.polimi.modaclouds.hdb.metrics_observer;
+package it.polimi.tower4clouds.observers.hdb.manager;
 
 public interface MessageParser {
 	public void parseMessage(String msg);

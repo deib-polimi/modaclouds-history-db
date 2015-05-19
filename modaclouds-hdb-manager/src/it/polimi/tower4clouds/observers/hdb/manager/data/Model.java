@@ -14,9 +14,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package it.polimi.modaclouds.hdb.manager.data;
+package it.polimi.tower4clouds.observers.hdb.manager.data;
 
-import it.polimi.modaclouds.hdb.manager.DataStore;
 import it.polimi.modaclouds.qos_models.monitoring_ontology.CloudProvider;
 import it.polimi.modaclouds.qos_models.monitoring_ontology.InternalComponent;
 import it.polimi.modaclouds.qos_models.monitoring_ontology.Location;
@@ -24,6 +23,7 @@ import it.polimi.modaclouds.qos_models.monitoring_ontology.Method;
 import it.polimi.modaclouds.qos_models.monitoring_ontology.PaaSService;
 import it.polimi.modaclouds.qos_models.monitoring_ontology.Resource;
 import it.polimi.modaclouds.qos_models.monitoring_ontology.VM;
+import it.polimi.tower4clouds.observers.hdb.manager.DataStore;
 
 import java.util.Collection;
 import java.util.HashSet;

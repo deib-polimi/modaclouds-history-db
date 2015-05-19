@@ -14,9 +14,9 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package it.polimi.modaclouds.hdb.metrics_observer.rest;
+package it.polimi.tower4clouds.observers.hdb.metricsobserver.rest;
 
-import it.polimi.modaclouds.hdb.metrics_observer.Configuration;
+import it.polimi.tower4clouds.observers.hdb.metricsobserver.Configuration;
 
 import java.io.IOException;
 import java.util.Random;

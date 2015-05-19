@@ -14,9 +14,9 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package it.polimi.modaclouds.hdb.metrics_observer;
+package it.polimi.tower4clouds.observers.hdb.metricsobserver;
 
-import it.polimi.modaclouds.hdb.metrics_observer.rest.Listener;
+import it.polimi.tower4clouds.observers.hdb.metricsobserver.rest.Listener;
 
 import org.restlet.data.Status;
 import org.restlet.resource.Delete;

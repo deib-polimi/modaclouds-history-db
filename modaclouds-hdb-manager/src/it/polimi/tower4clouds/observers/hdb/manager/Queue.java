@@ -14,13 +14,14 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package it.polimi.modaclouds.hdb.manager;
+package it.polimi.tower4clouds.observers.hdb.manager;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -255,7 +256,7 @@ public class Queue {
 		}
 	}
 
-	private void close() throws IOException {
+	private void close() throws IOException, TimeoutException {
 		if (!connected)
 			return;
 
