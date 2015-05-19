@@ -16,13 +16,13 @@
  */
 package it.polimi.tower4clouds.observers.hdb.manager.data;
 
-import it.polimi.modaclouds.qos_models.monitoring_ontology.CloudProvider;
-import it.polimi.modaclouds.qos_models.monitoring_ontology.InternalComponent;
-import it.polimi.modaclouds.qos_models.monitoring_ontology.Location;
-import it.polimi.modaclouds.qos_models.monitoring_ontology.Method;
-import it.polimi.modaclouds.qos_models.monitoring_ontology.PaaSService;
-import it.polimi.modaclouds.qos_models.monitoring_ontology.Resource;
-import it.polimi.modaclouds.qos_models.monitoring_ontology.VM;
+import it.polimi.tower4clouds.model.ontology.CloudProvider;
+import it.polimi.tower4clouds.model.ontology.InternalComponent;
+import it.polimi.tower4clouds.model.ontology.Location;
+import it.polimi.tower4clouds.model.ontology.Method;
+import it.polimi.tower4clouds.model.ontology.PaaSService;
+import it.polimi.tower4clouds.model.ontology.Resource;
+import it.polimi.tower4clouds.model.ontology.VM;
 import it.polimi.tower4clouds.observers.hdb.manager.DataStore;
 
 import java.util.Collection;

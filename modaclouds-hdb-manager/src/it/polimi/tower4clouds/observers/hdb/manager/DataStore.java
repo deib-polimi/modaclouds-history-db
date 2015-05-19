@@ -16,15 +16,15 @@
  */
 package it.polimi.tower4clouds.observers.hdb.manager;
 
-import it.polimi.modaclouds.monitoring.kb.api.DeserializationException;
-import it.polimi.modaclouds.monitoring.kb.api.FusekiKBAPI;
+import it.polimi.modaclouds.monitoring.kb.api.FusekiKbAPI;
 import it.polimi.modaclouds.monitoring.kb.api.SerializationException;
-import it.polimi.modaclouds.monitoring.kb.api.Util;
-import it.polimi.modaclouds.qos_models.monitoring_ontology.MO;
-import it.polimi.modaclouds.qos_models.monitoring_ontology.MOVocabulary;
+import it.polimi.tower4clouds.model.ontology.MO;
+import it.polimi.tower4clouds.model.ontology.MOVocabulary;
 import it.polimi.tower4clouds.observers.hdb.manager.data.Model;
 import it.polimi.tower4clouds.observers.hdb.manager.data.MonitoringData;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -50,7 +50,7 @@ public class DataStore {
 	@SuppressWarnings("unused")
 	private String host;
 	
-	private static FusekiKBAPI knowledgeBaseModels = null;
+	private static FusekiKbAPI knowledgeBaseModels = null;
 	
 	private static DatasetAccessor datasetAccessor = null;
 	
@@ -60,8 +60,12 @@ public class DataStore {
 		this.host = host;
 		
 		if (knowledgeBaseModels == null) {
-			knowledgeBaseModels = new FusekiKBAPI(host);
-			knowledgeBaseModels.uploadOntology(MO.model, "models");
+			knowledgeBaseModels = new FusekiKbAPI(host);
+			try {
+				knowledgeBaseModels.putModel(MO.model, MO.URI + "models");
+			} catch (IOException e) {
+				logger.error("Error while putting the model in the datastore. Maybe it's already there?");
+			}
 		}
 		
 		if (datasetAccessor == null)
@@ -116,12 +120,7 @@ public class DataStore {
 			
 			String graphUri = Configuration.FUSEKI_MODEL + timestamp;
 			
-			String bak = it.polimi.modaclouds.monitoring.kb.api.Config.graphsNamespace;
-			
-			it.polimi.modaclouds.monitoring.kb.api.Config.graphsNamespace = Configuration.FUSEKI_MODEL;
-			String graphName = Long.toString(timestamp);
-			
-			knowledgeBaseModels.add(m.getResources(), MOVocabulary.resourceIdParameterName, graphName);
+			knowledgeBaseModels.add(m.getResources(), MOVocabulary.idParameterName, graphUri);
 			boolean res1 = true; // we suppose that it always works
 			
 			if (res1)
@@ -129,10 +128,8 @@ public class DataStore {
 			else
 				logger.error("Error while adding the model to the datastore.");
 			
-			it.polimi.modaclouds.monitoring.kb.api.Config.graphsNamespace = bak;
-			
 			String dailyGraphUri = Configuration.FUSEKI_MODEL_DAILY + dayTimestamp(timestamp);
-			boolean res2 = add(dailyGraphUri, Model.getNameModel(Configuration.FUSEKI_MODEL + graphName, timestamp));
+			boolean res2 = add(dailyGraphUri, Model.getNameModel(graphUri, timestamp));
 			
 			boolean res3 = add("default", Model.defaultGraphStatementAdd(graphUri, hourTimestamp(timestamp)));
 			
@@ -140,7 +137,7 @@ public class DataStore {
 				logger.error("Error while adding the info on the model in the daily graph in the datastore.");
 			
 			return res1 && res2 && res3;
-		} catch (SerializationException | DeserializationException e) {
+		} catch (SerializationException e) {
 			logger.error("Error while saving the model to the datastore!", e);
 		}
 		
@@ -185,20 +182,15 @@ public class DataStore {
 			
 			String graphUri = Configuration.FUSEKI_DELTAS_MODEL + timestamp;
 			
-			String bak = it.polimi.modaclouds.monitoring.kb.api.Config.graphsNamespace;
-
-			it.polimi.modaclouds.monitoring.kb.api.Config.graphsNamespace = Configuration.FUSEKI_DELTAS_MODEL;
-			String graphName = Long.toString(timestamp);
-			
-			knowledgeBaseModels.add(m.getResources(), MOVocabulary.resourceIdParameterName, graphName);
+			knowledgeBaseModels.add(m.getResources(), MOVocabulary.idParameterName, graphUri);
 			boolean res1 = true; // we suppose that it always works
 			
 			logger.info("Updated model added to the datastore.");
 			
-			it.polimi.modaclouds.monitoring.kb.api.Config.graphsNamespace = bak;
+//			it.polimi.modaclouds.monitoring.kb.api.Config.graphsNamespace = bak;
 			
 			String dailyGraphUri = Configuration.FUSEKI_DELTAS_MODEL_DAILY + dayTimestamp(timestamp);
-			boolean res2 = add(dailyGraphUri, Model.getNameModel(Configuration.FUSEKI_DELTAS_MODEL + graphName, timestamp));
+			boolean res2 = add(dailyGraphUri, Model.getNameModel(graphUri, timestamp));
 			
 			boolean res3 = add("default", Model.defaultGraphStatementUpdate(graphUri, hourTimestamp(timestamp)));
 			
@@ -206,7 +198,7 @@ public class DataStore {
 				logger.error("Error while adding the info on the update of a model in the daily graph in the datastore.");
 			
 			return res1 && res2 && res3;
-		} catch (SerializationException | DeserializationException e) {
+		} catch (SerializationException e) {
 			logger.error("Error while saving the information on the update of a model!", e);
 		}
 		
@@ -285,6 +277,10 @@ public class DataStore {
 	}
 	
 	public static String encodeURL(String URL) {
-		return Util.urlEncode(URL);
+		try {
+			return URLEncoder.encode(URL, "UTF-8");
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }
