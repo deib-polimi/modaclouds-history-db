@@ -3,7 +3,7 @@
 # Models
 
 ```
-PUT /model/resources
+PUT /resources
 ```
 
 ## Description
@@ -40,7 +40,7 @@ The errors aren't implemented at the time of writing this, so every request will
 ### Request
 
 ```
-PUT /model/resources
+PUT /resources
 ```
 
 ```json

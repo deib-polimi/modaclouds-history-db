@@ -10,9 +10,9 @@
 
 ### Model
 
-- **[<code>POST</code> /model/resources](rest/model/POST-model-resources.md)**
-- **[<code>PUT</code> /model/resources](rest/model/PUT-model-resources.md)**
-- **[<code>DELETE</code> /model/resources/:id](rest/model/DELETE-model-resources-id.md)**
+- **[<code>POST</code> /resources](rest/model/POST-model-resources.md)**
+- **[<code>PUT</code> /resources](rest/model/PUT-model-resources.md)**
+- **[<code>DELETE</code> /resources/:id](rest/model/DELETE-model-resources-id.md)**
 
 ## Java API
 

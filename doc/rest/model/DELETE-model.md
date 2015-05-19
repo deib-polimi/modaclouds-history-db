@@ -3,7 +3,7 @@
 # Models
 
 ```
-DELETE /model/resources/:id
+DELETE /resources/:id
 ```
 
 ## Description
@@ -44,7 +44,7 @@ The errors aren't implemented at the time of writing this, so every request will
 ### Request
 
 ```
-DELETE /model/resources/vm1
+DELETE /resources/vm1
 ```
 
 ```
