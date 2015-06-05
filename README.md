@@ -1,6 +1,6 @@
 # ~~MODAClouds HistoryDB~~
 
-> The history db was migrated and included in the new [Tower 4Clouds Repo](https://github.com/deib-polimi/tower4clouds)
+> The history db was migrated and included in the observers module of the new [Tower 4Clouds Repository](https://github.com/deib-polimi/tower4clouds)
 ------
 
 In the context of [MODAClouds European project](http://www.modaclouds.eu), the [Politecnico di Milano](http://www.polimi.it) was one of the partners involved in the development of the Monitoring Platform.
