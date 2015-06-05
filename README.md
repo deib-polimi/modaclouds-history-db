@@ -1,4 +1,8 @@
-# MODAClouds HistoryDB
+# ~~MODAClouds HistoryDB~~
+
+> The history db was migrated and included in the new [Tower 4Clouds Repo](https://github.com/deib-polimi/tower4clouds)
+------
+
 In the context of [MODAClouds European project](http://www.modaclouds.eu), the [Politecnico di Milano](http://www.polimi.it) was one of the partners involved in the development of the Monitoring Platform.
 
 HistoryDB is a component that logs in a **datastore** (usually [Apache Fuseki](http://jena.apache.org/documentation/serving_data/index.html)) a number of different requests, making it possible to check the evolution of the system step by step.
